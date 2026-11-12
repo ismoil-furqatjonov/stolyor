@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stolyor — Byudjetli bayram stoli rejalashtiruvchisi</title>
+  <meta name="description" content="Tadbir va bayram dasturxonini byudjet asosida rejalashtiruvchi mobil yordamchi">
+  <meta name="theme-color" content="#16231D">
+
+  <!-- Favicon va PWA Manifest (nisbiy yo'llar) -->
+  <link rel="icon" type="image/svg+xml" href="./icons/icon.svg">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link rel="manifest" href="./manifest.json">
+
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <!-- Ilovani o'rnatish bo'yicha maslahat (PWA Banner) -->
+  <aside id="pwa-install-banner" class="pwa-banner hidden" aria-label="Ilovani o'rnatish">
+    <div class="pwa-banner-content">
+      <div class="pwa-banner-text">
+        <strong>Telefoningizning bosh ekraniga qo'shing</strong>
+        <p id="pwa-instructions">Ilovadan tez va qulay foydalanish uchun o'rnatib oling.</p>
+      </div>
+      <div class="pwa-banner-actions">
+        <button id="pwa-install-btn" class="btn btn-sm btn-amber hidden">O'rnatish</button>
+        <button id="pwa-dismiss-btn" class="btn btn-sm btn-subtle" aria-label="Yopish">✕</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Yaqinlashib kelayotgan tadbir eslatmasi (Global Banner) -->
+  <section id="global-reminder-banner" class="reminder-banner hidden" aria-live="polite">
+    <div class="reminder-content">
+      <span class="reminder-icon">🎉</span>
+      <div class="reminder-text" id="global-reminder-text"></div>
+      <div class="reminder-actions">
+        <button id="reminder-plan-btn" class="btn btn-sm btn-amber">Reja tuzish</button>
+        <button id="reminder-later-btn" class="btn btn-sm btn-subtle">Keyinroq</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Asosiy Sarlavha (Header) -->
+  <header class="app-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <img src="./icons/icon.svg" alt="Stolyor logotipi" class="app-logo" width="40" height="40">
+        <div>
+          <h1 class="brand-title">Stolyor</h1>
+          <p class="brand-subtitle">Byudjetli bayram stoli yordamchisi</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Asosiy bo'limlar navigatsiyasi (Tabs) -->
+  <nav class="tabs-nav-container" aria-label="Asosiy sahifalar">
+    <div class="container">
+      <div class="tabs-nav" role="tablist">
+        <button id="tab-btn-planner" role="tab" aria-selected="true" aria-controls="tab-planner" class="tab-btn active">
+          <span class="tab-icon">🍽️</span> Stol tuzish
+        </button>
+        <button id="tab-btn-people" role="tab" aria-selected="false" aria-controls="tab-people" class="tab-btn">
+          <span class="tab-icon">👥</span> Yaqinlarim
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Asosiy kontent -->
+  <main class="container main-content">
+
+    <!-- ========================================== -->
+    <!-- TAB 1: STOL TUZISH                         -->
+    <!-- ========================================== -->
+    <section id="tab-planner" role="tabpanel" aria-labelledby="tab-btn-planner" class="tab-pane active">
+      
+      <!-- Kiritish formasi -->
+      <form id="planner-form" class="card form-card" novalidate>
+        <h2 class="card-title">Dasturxon parametrlarini kiriting</h2>
+
+        <!-- 1. Tadbir sanasi -->
+        <div class="form-group">
+          <label for="event-date" class="form-label">
+            1. Tadbir sanasi <span class="required">*</span>
+          </label>
+          <input type="date" id="event-date" class="form-control" required>
+          <div id="date-uzbek-display" class="date-uzbek-badge" aria-live="polite"></div>
+          <div id="date-countdown-display" class="date-countdown-badge" aria-live="polite"></div>
+          <div id="date-error" class="form-error hidden" role="alert"></div>
+        </div>
+
+        <!-- 2. Tadbir turi (Katta chiplar) -->
+        <div class="form-group">
+          <label class="form-label">
+            2. Tadbir turi <span class="required">*</span>
+          </label>
+          <div id="event-type-chips" class="chips-grid" role="radiogroup" aria-label="Tadbir turi">
+            <button type="button" class="chip active" data-type="Tug'ilgan kun (katta odamlar)" role="radio" aria-checked="true">
+              Tug'ilgan kun (katta odamlar)
+            </button>
+            <button type="button" class="chip" data-type="Tug'ilgan kun (bolalar)" role="radio" aria-checked="false">
+              Tug'ilgan kun (bolalar)
+            </button>
+            <button type="button" class="chip" data-type="Oilaviy ziyofat" role="radio" aria-checked="false">
+              Oilaviy ziyofat
+            </button>
+            <button type="button" class="chip" data-type="Iftor" role="radio" aria-checked="false">
+              Iftor
+            </button>
+            <button type="button" class="chip" data-type="Navro'z" role="radio" aria-checked="false">
+              Navro'z
+            </button>
+            <button type="button" class="chip" data-type="Boshqa" role="radio" aria-checked="false">
+              Boshqa
+            </button>
+          </div>
+          <div id="custom-event-container" class="custom-event-box hidden">
+            <label for="custom-event-input" class="form-label-sub">Tadbir nomini yozing:</label>
+            <input type="text" id="custom-event-input" class="form-control" placeholder="Masalan: Kelin salom, Chaqaloq to'yi...">
+          </div>
+        </div>
+
+        <!-- 3. Budjet (so'mda) -->
+        <div class="form-group">
+          <label for="budget-input" class="form-label">
+            3. Budjet, so'mda <span class="required">*</span>
+          </label>
+          <input type="number" id="budget-input" class="form-control font-numeric" value="500000" placeholder="500000" min="50000" step="10000" required>
+          <div class="quick-buttons" aria-label="Tezkor byudjet tanlash">
+            <button type="button" class="btn btn-chip" data-budget="300000">300 000</button>
+            <button type="button" class="btn btn-chip active" data-budget="500000">500 000</button>
+            <button type="button" class="btn btn-chip" data-budget="1000000">1 000 000</button>
+          </div>
+          <div id="budget-error" class="form-error hidden" role="alert"></div>
+        </div>
+
+        <!-- 4. Mehmonlar soni -->
+        <div class="form-group">
+          <label for="guests-input" class="form-label">
+            4. Mehmonlar soni <span class="required">*</span>
+          </label>
+          <div class="counter-control">
+            <button type="button" id="guests-minus-btn" class="btn counter-btn" aria-label="Mehmonlar sonini kamaytirish">−</button>
+            <input type="number" id="guests-input" class="form-control text-center font-numeric counter-input" value="8" min="2" max="50" required>
+            <button type="button" id="guests-plus-btn" class="btn counter-btn" aria-label="Mehmonlar sonini ko'paytirish">+</button>
+          </div>
+          <span class="form-hint">2 nafardan 50 nafargacha</span>
+          <div id="guests-error" class="form-error hidden" role="alert"></div>
+        </div>
+
+        <!-- 5. Tuman -->
+        <div class="form-group">
+          <label for="district-select" class="form-label">
+            5. Tuman (Toshkent shahri) <span class="required">*</span>
+          </label>
+          <select id="district-select" class="form-control" required>
+            <option value="Chilonzor">Chilonzor</option>
+            <option value="Yunusobod">Yunusobod</option>
+            <option value="Mirzo Ulug'bek">Mirzo Ulug'bek</option>
+            <option value="Yakkasaroy">Yakkasaroy</option>
+            <option value="Shayxontohur">Shayxontohur</option>
+            <option value="Sergeli">Sergeli</option>
+            <option value="Olmazor">Olmazor</option>
+            <option value="Mirobod">Mirobod</option>
+            <option value="Uchtepa">Uchtepa</option>
+            <option value="Bektemir">Bektemir</option>
+            <option value="Yashnobod">Yashnobod</option>
+          </select>
+        </div>
+
+        <!-- 6. Button "Stol tuzish" -->
+        <div class="form-group form-action">
+          <button type="submit" id="submit-plan-btn" class="btn btn-primary btn-block btn-lg">
+            🍽️ Stol tuzish
+          </button>
+        </div>
+      </form>
+
+      <!-- Natija bloki (Plan Result) -->
+      <section id="plan-result-container" class="plan-result-container hidden" aria-live="polite">
+        
+        <!-- Kam byudjet ogohlantirishi -->
+        <div id="low-budget-warning" class="alert-box alert-warning hidden" role="alert"></div>
+
+        <!-- Byudjetdan oshib ketish ogohlantirishi -->
+        <div id="over-budget-warning" class="alert-box alert-danger hidden" role="alert"></div>
+
+        <!-- Sana bo'yicha maslahat xabari -->
+        <div id="date-hint-warning" class="alert-box alert-info hidden"></div>
+
+        <!-- Yaqin kishi eslatmasi/allergiyasi -->
+        <div id="person-allergy-notice" class="alert-box alert-amber hidden"></div>
+
+        <!-- Natija Sarlavha Kartasi -->
+        <div id="plan-header-card" class="card plan-header-card">
+          <div class="plan-header-top">
+            <h3 id="plan-title" class="plan-title">Tadbir rejasi</h3>
+            <span id="plan-budget-badge" class="badge badge-amber font-numeric"></span>
+          </div>
+          <p id="plan-summary-line" class="plan-summary-line"></p>
+        </div>
+
+        <!-- 3 ta Kategoriya Kartasi -->
+        <div class="categories-list">
+          
+          <!-- 1. Taom Kartasi -->
+          <article class="card category-card" id="cat-card-food">
+            <div class="category-header">
+              <h4 class="category-title">🍲 Taom</h4>
+              <span id="cat-subtotal-food" class="badge badge-subtle font-numeric">0 so'm</span>
+            </div>
+            <div id="cat-items-food" class="items-list"></div>
+            <div class="category-footer">
+              <button type="button" class="btn btn-sm btn-outline add-item-btn" data-category="taom">
+                + Taom qo'shish
+              </button>
+            </div>
+          </article>
+
+          <!-- 2. Tort (yoki Shirinliklar) Kartasi -->
+          <article class="card category-card" id="cat-card-cake">
+            <div class="category-header">
+              <h4 id="cat-title-cake" class="category-title">🎂 Tort</h4>
+              <span id="cat-subtotal-cake" class="badge badge-subtle font-numeric">0 so'm</span>
+            </div>
+            <div id="cat-items-cake" class="items-list"></div>
+            <div class="category-footer">
+              <button type="button" id="cat-add-btn-cake" class="btn btn-sm btn-outline add-item-btn" data-category="tort">
+                + Mahsulot qo'shish
+              </button>
+            </div>
+          </article>
+
+          <!-- 3. Ichimlik va mevalar Kartasi -->
+          <article class="card category-card" id="cat-card-drinks">
+            <div class="category-header">
+              <h4 class="category-title">🍎 Ichimlik va mevalar</h4>
+              <span id="cat-subtotal-drinks" class="badge badge-subtle font-numeric">0 so'm</span>
+            </div>
+            <div id="cat-items-drinks" class="items-list"></div>
+            <div class="category-footer">
+              <button type="button" class="btn btn-sm btn-outline add-item-btn" data-category="drinks">
+                + Ichimlik yoki meva qo'shish
+              </button>
+            </div>
+          </article>
+
+        </div>
+
+        <!-- Live Byudjet va Xulosa Paneli -->
+        <div class="card summary-card">
+          <div class="summary-row">
+            <span>Jami hisoblangan:</span>
+            <strong id="plan-total-amount" class="summary-amount font-numeric">0 so'm</strong>
+          </div>
+          <div class="summary-row" id="plan-balance-row">
+            <span id="plan-balance-label">Qoldiq mablag':</span>
+            <strong id="plan-balance-amount" class="summary-amount font-numeric">0 so'm</strong>
+          </div>
+          <div class="progress-bar-container">
+            <div id="budget-progress-bar" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+          <p class="disclaimer-text">
+            ⚠️ Narxlar taxminiy. Buyurtma berishdan oldin do'kondan tasdiqlang.
+          </p>
+        </div>
+
+        <!-- Boshqaruv tugmalari (Actions) -->
+        <div class="plan-actions-grid">
+          <button type="button" id="regenerate-plan-btn" class="btn btn-secondary">
+            🔄 Qayta tuzish
+          </button>
+          <button type="button" id="undo-plan-btn" class="btn btn-secondary" disabled>
+            ↩️ Orqaga qaytarish
+          </button>
+          <button type="button" id="reset-plan-btn" class="btn btn-secondary">
+            ⏮️ Birinchi tavsiyaga qaytish
+          </button>
+          <button type="button" id="share-plan-btn" class="btn btn-amber">
+            📋 Natijani ulashish
+          </button>
+          <button type="button" id="calendar-export-btn" class="btn btn-outline">
+            📅 Eslatma qo'shish (.ics)
+          </button>
+          <button type="button" id="save-to-person-btn" class="btn btn-outline hidden">
+            💾 Shu rejani saqlash
+          </button>
+        </div>
+
+        <!-- Fikr bildirish (Feedback) -->
+        <div class="card feedback-card">
+          <div id="feedback-prompt">
+            <p class="feedback-question">Foydali bo'ldimi?</p>
+            <div class="feedback-buttons">
+              <button type="button" class="btn btn-sm btn-outline feedback-btn" data-answer="ha">👍 Ha</button>
+              <button type="button" class="btn btn-sm btn-outline feedback-btn" data-answer="yoq">👎 Yo'q</button>
+            </div>
+          </div>
+          <div id="feedback-thanks" class="feedback-thanks hidden">
+            Rahmat! Fikringiz xizmatni yaxshilashga yordam beradi.
+          </div>
+        </div>
+
+      </section>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 2: YAQINLARIM                          -->
+    <!-- ========================================== -->
+    <section id="tab-people" role="tabpanel" aria-labelledby="tab-btn-people" class="tab-pane hidden">
+      
+      <!-- Maxfiylik va Zaxira qutisi -->
+      <div class="card privacy-card">
+        <p class="privacy-note">
+          🔒 <strong>Maxfiylik:</strong> Ma'lumotlar faqat shu telefonda saqlanadi. Telefon almashsangiz yoki brauzer ma'lumotlarini o'chirsangiz, yo'qoladi.
+        </p>
+        <div class="backup-actions">
+          <button type="button" id="export-json-btn" class="btn btn-sm btn-outline">
+            📥 Zaxira nusxa
+          </button>
+          <label class="btn btn-sm btn-outline file-upload-label">
+            📤 Tiklash
+            <input type="file" id="import-json-input" accept=".json,application/json" class="hidden">
+          </label>
+          <button type="button" id="clear-all-people-btn" class="btn btn-sm btn-subtle text-danger">
+            🗑️ Hammasini o'chirish
+          </button>
+        </div>
+        <div id="storage-message" class="storage-alert hidden" role="alert"></div>
+      </div>
+
+      <!-- Yaqin kishi qo'shish tugmasi va Kalendarga o'tkazish -->
+      <div class="people-toolbar">
+        <button type="button" id="open-add-person-btn" class="btn btn-primary">
+          + Yangi yaqin kishini qo'shish
+        </button>
+        <button type="button" id="export-all-ics-btn" class="btn btn-outline">
+          📅 Hammasini kalendarga qo'shish
+        </button>
+      </div>
+      <p class="calendar-hint-text">
+        ℹ️ Eslatmani telefoningizning kalendari yuboradi.
+      </p>
+
+      <!-- Yaqin kunlar bloki (Keyingi 30 kun) -->
+      <section class="upcoming-section">
+        <h3 class="section-heading">Yaqin kunlar (keyingi 30 kun)</h3>
+        <div id="upcoming-people-list" class="people-grid"></div>
+        <div id="upcoming-empty-msg" class="empty-state-card hidden">
+          <p>Yaqin 30 kun ichida hech qanday rejalashtirilgan tadbir yo'q.</p>
+        </div>
+      </section>
+
+      <!-- Butun yil bo'yicha guruhlangan ro'yxat -->
+      <section class="all-year-section">
+        <h3 class="section-heading">Barcha oylar</h3>
+        <div id="year-grouped-people" class="year-groups"></div>
+        <div id="people-empty-state" class="empty-state-card hidden">
+          <span class="empty-icon">👥</span>
+          <h4>Hali hech kim qo'shilmagan</h4>
+          <p>Yaqinlaringizni qo'shing, sana yaqinlashganda eslatamiz.</p>
+          <button type="button" class="btn btn-primary add-first-person-btn">+ Yaqin kishini qo'shish</button>
+        </div>
+      </section>
+
+    </section>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- MODAL / BOTTOM SHEET: ALMASHTIRISH (SWAP)  -->
+  <!-- ========================================== -->
+  <div id="swap-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="swap-modal-title">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 id="swap-modal-title" class="modal-title">Mahsulotni almashtirish</h3>
+        <button type="button" id="close-swap-modal-btn" class="btn-close" aria-label="Yopish">✕</button>
+      </div>
+      <div class="modal-body">
+        <p id="swap-current-item-info" class="swap-current-text"></p>
+        <div id="swap-options-list" class="swap-options-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: YAQIN KISHI QO'SHISH / TAHRIRLASH   -->
+  <!-- ========================================== -->
+  <div id="person-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="person-modal-title">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="person-modal-title" class="modal-title">Yaqin kishini qo'shish</h3>
+        <button type="button" id="close-person-modal-btn" class="btn-close" aria-label="Yopish">✕</button>
+      </div>
+      <form id="person-form" class="modal-body form-grid" novalidate>
+        <input type="hidden" id="person-id-input">
+
+        <!-- Ism -->
+        <div class="form-group">
+          <label for="person-name" class="form-label">Ism <span class="required">*</span></label>
+          <input type="text" id="person-name" class="form-control" placeholder="Masalan: Sardor" required>
+        </div>
+
+        <!-- Munosabat -->
+        <div class="form-group">
+          <label class="form-label">Munosabat <span class="required">*</span></label>
+          <div id="relationship-chips" class="chips-wrap" role="radiogroup">
+            <button type="button" class="chip active" data-rel="Ona">Ona</button>
+            <button type="button" class="chip" data-rel="Ota">Ota</button>
+            <button type="button" class="chip" data-rel="Aka-uka">Aka-uka</button>
+            <button type="button" class="chip" data-rel="Opa-singil">Opa-singil</button>
+            <button type="button" class="chip" data-rel="Farzand">Farzand</button>
+            <button type="button" class="chip" data-rel="Do'st">Do'st</button>
+            <button type="button" class="chip" data-rel="Hamkasb">Hamkasb</button>
+            <button type="button" class="chip" data-rel="Boshqa">Boshqa</button>
+          </div>
+        </div>
+
+        <!-- Sana (kun va oy majburiy, yil ixtiyoriy) -->
+        <div class="form-group">
+          <label class="form-label">Sana <span class="required">*</span></label>
+          <div class="date-select-row">
+            <select id="person-birth-day" class="form-control" aria-label="Kun" required>
+              <option value="1">1-kun</option>
+              <option value="2">2-kun</option>
+              <option value="3">3-kun</option>
+              <option value="4">4-kun</option>
+              <option value="5">5-kun</option>
+              <option value="6">6-kun</option>
+              <option value="7">7-kun</option>
+              <option value="8">8-kun</option>
+              <option value="9">9-kun</option>
+              <option value="10">10-kun</option>
+              <option value="11">11-kun</option>
+              <option value="12">12-kun</option>
+              <option value="13">13-kun</option>
+              <option value="14">14-kun</option>
+              <option value="15">15-kun</option>
+              <option value="16">16-kun</option>
+              <option value="17">17-kun</option>
+              <option value="18">18-kun</option>
+              <option value="19">19-kun</option>
+              <option value="20">20-kun</option>
+              <option value="21">21-kun</option>
+              <option value="22">22-kun</option>
+              <option value="23">23-kun</option>
+              <option value="24">24-kun</option>
+              <option value="25">25-kun</option>
+              <option value="26">26-kun</option>
+              <option value="27">27-kun</option>
+              <option value="28">28-kun</option>
+              <option value="29">29-kun</option>
+              <option value="30">30-kun</option>
+              <option value="31">31-kun</option>
+            </select>
+            <select id="person-birth-month" class="form-control" aria-label="Oy" required>
+              <option value="1">Yanvar</option>
+              <option value="2">Fevral</option>
+              <option value="3">Mart</option>
+              <option value="4">Aprel</option>
+              <option value="5">May</option>
+              <option value="6">Iyun</option>
+              <option value="7">Iyul</option>
+              <option value="8">Avgust</option>
+              <option value="9">Sentabr</option>
+              <option value="10">Oktabr</option>
+              <option value="11">Noyabr</option>
+              <option value="12">Dekabr</option>
+            </select>
+            <input type="number" id="person-birth-year" class="form-control font-numeric" placeholder="Yil (ixtiyoriy)" min="1920" max="2026">
+          </div>
+          <span class="form-hint">Yil ko'rsatilsa, yoshi hisoblanadi. 29-fevral kabisa bo'lmagan yillarda 28-fevralda nishonlanadi.</span>
+        </div>
+
+        <!-- Tadbir turi -->
+        <div class="form-group">
+          <label class="form-label">Tadbir turi</label>
+          <div id="person-event-type-chips" class="chips-wrap" role="radiogroup">
+            <button type="button" class="chip active" data-type="Tug'ilgan kun">Tug'ilgan kun</button>
+            <button type="button" class="chip" data-type="Nikoh yilligi">Nikoh yilligi</button>
+            <button type="button" class="chip" data-type="Yubiley">Yubiley</button>
+            <button type="button" class="chip" data-type="Boshqa">Boshqa</button>
+          </div>
+        </div>
+
+        <!-- Sevimli shirinlik yoki taom -->
+        <div class="form-group">
+          <label for="person-favorite" class="form-label">Sevimli shirinlik / taom (ixtiyoriy)</label>
+          <input type="text" id="person-favorite" class="form-control" placeholder="Masalan: Medovik torti, tandir somsa">
+        </div>
+
+        <!-- Allergiya yoki cheklov -->
+        <div class="form-group">
+          <label for="person-allergy" class="form-label">Allergiya yoki cheklov (ixtiyoriy)</label>
+          <input type="text" id="person-allergy" class="form-control" placeholder="Masalan: yong'oqqa allergiya, shakar iste'mol qilmaydi">
+        </div>
+
+        <!-- Odatiy byudjet -->
+        <div class="form-group">
+          <label for="person-budget" class="form-label">Odatiy byudjet, so'mda (ixtiyoriy)</label>
+          <input type="number" id="person-budget" class="form-control font-numeric" placeholder="500000" min="50000" step="10000">
+        </div>
+
+        <!-- Izoh -->
+        <div class="form-group">
+          <label for="person-notes" class="form-label">Izoh (ixtiyoriy)</label>
+          <textarea id="person-notes" class="form-control" rows="2" placeholder="Qo'shimcha eslatmalar..."></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary">Saqlash</button>
+          <button type="button" id="cancel-person-modal-btn" class="btn btn-subtle">Bekor qilish</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast xabarnomasi -->
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="container footer-content">
+      <p class="footer-mvp">Bu MVP versiya. Fikringizni yuboring: <a href="https://t.me/stolyor_aloqa_bot" target="_blank" rel="noopener noreferrer" class="footer-link">Telegram orqali bog'lanish</a></p>
+      <p class="footer-copy">© 2026 Stolyor — barcha ma'lumotlar brauzeringizda xavfsiz saqlanadi.</p>
+    </div>
+  </footer>
+
+  <script src="./data/shops.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

@@ -1,6 +1,5 @@
-// Stolyor Service Worker
-// Versiya yangilanganida kesh nomini o'zgartiring (masalan: 'stolyor-v2')
-const CACHE_NAME = 'stolyor-v1';
+// Stolyor Service Worker — Versiya 3
+const CACHE_NAME = 'stolyor-v3';
 
 const STATIC_ASSETS = [
   './',
@@ -8,7 +7,13 @@ const STATIC_ASSETS = [
   './style.css',
   './app.js',
   './manifest.json',
+  './CREDITS.md',
   './data/shops.json',
+  './data/shops.js',
+  './data/foods.json',
+  './data/foods.js',
+  './data/drinks.json',
+  './data/drinks.js',
   './icons/icon.svg',
   './icons/icon-192.png',
   './icons/icon-512.png'
@@ -39,8 +44,8 @@ self.addEventListener('activate', (event) => {
 });
 
 // So'rovlarni tutish:
-// data/shops.json uchun: Network-First (narxlar va do'konlar internet bo'lganda darhol yangilanishi uchun)
-// Boshqa resurslar uchun: Cache-First (oflayn ishlash va tezkor yuklanish uchun)
+// data/*.json uchun: Network-First (narxlar va mahsulotlar internet bo'lganda darhol yangilanishi uchun)
+// Rasmlar va boshqa resurslar uchun: Cache-First (oflayn ishlash va ultra-tezkor yuklanish uchun)
 self.addEventListener('fetch', (event) => {
   const requestUrl = new URL(event.request.url);
 
@@ -49,7 +54,8 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  if (requestUrl.pathname.endsWith('shops.json')) {
+  // JSON ma'lumotlar uchun: Network-First
+  if (requestUrl.pathname.endsWith('.json')) {
     event.respondWith(
       fetch(event.request)
         .then((networkResponse) => {
@@ -66,22 +72,32 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Boshqa barcha statik resurslar uchun Cache-first
+  // Rasmlar va boshqa statik resurslar uchun: Cache-First
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
         return cachedResponse;
       }
-      return fetch(event.request).then((networkResponse) => {
-        if (networkResponse && networkResponse.status === 200) {
+      return fetch(event.request)
+        .then((networkResponse) => {
+          if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
+            return networkResponse;
+          }
           const responseClone = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseClone);
           });
-        }
-        return networkResponse;
-      });
+          return networkResponse;
+        })
+        .catch(() => {
+          // Rasmlar uchun oflayn fallback
+          if (event.request.destination === 'image') {
+            return caches.match('./icons/icon-192.png');
+          }
+          if (event.request.mode === 'navigate') {
+            return caches.match('./index.html');
+          }
+        });
     })
   );
 });
-

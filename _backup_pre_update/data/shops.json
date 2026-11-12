@@ -1,0 +1,492 @@
+{
+  "version": "1.0",
+  "comment": "Namuna do'konlar ma'lumotlari. Barcha narxlar taxminiy va ko'rgazmali.",
+  "shops": [
+    {
+      "id": "shop-1",
+      "name": "Namuna qandolatxona 1",
+      "category": "qandolat",
+      "districts": ["Chilonzor", "Uchtepa", "Yakkasaroy"],
+      "telegram": "https://t.me/namuna_qandolat1",
+      "phone": "+998901112233",
+      "partner": true,
+      "hours": "08:00-22:00",
+      "items": [
+        {
+          "id": "t-1",
+          "name": "Medovik torti (asalli)",
+          "category": "tort",
+          "unit": "kg",
+          "price": 95000,
+          "kidFriendly": true,
+          "gramsPerPerson": 150
+        },
+        {
+          "id": "t-2",
+          "name": "Shokoladli biskvit tort",
+          "category": "tort",
+          "unit": "kg",
+          "price": 120000,
+          "kidFriendly": true,
+          "gramsPerPerson": 150
+        },
+        {
+          "id": "t-3",
+          "name": "Mevali yengil bento tort",
+          "category": "tort",
+          "unit": "dona",
+          "price": 75000,
+          "kidFriendly": true,
+          "fixedGuestMax": 4
+        },
+        {
+          "id": "t-4",
+          "name": "Bolalar uchun rangli kapkeyklar to'plami",
+          "category": "shirinlik",
+          "unit": "to'plam (10 dona)",
+          "price": 85000,
+          "kidFriendly": true
+        }
+      ]
+    },
+    {
+      "id": "shop-2",
+      "name": "Namuna qandolatxona 2",
+      "category": "qandolat",
+      "districts": ["Yunusobod", "Mirzo Ulug'bek", "Shayxontohur"],
+      "telegram": "https://t.me/namuna_qandolat2",
+      "phone": "+998902223344",
+      "partner": false,
+      "hours": "09:00-21:00",
+      "items": [
+        {
+          "id": "t-5",
+          "name": "Klassik Napoleon torti",
+          "category": "tort",
+          "unit": "kg",
+          "price": 90000,
+          "kidFriendly": true,
+          "gramsPerPerson": 150
+        },
+        {
+          "id": "t-6",
+          "name": "Qizil baxmal (Red Velvet) torti",
+          "category": "tort",
+          "unit": "kg",
+          "price": 130000,
+          "kidFriendly": true,
+          "gramsPerPerson": 150
+        },
+        {
+          "id": "t-7",
+          "name": "Bolalar uchun maxsus bayram torti",
+          "category": "tort",
+          "unit": "kg",
+          "price": 140000,
+          "kidFriendly": true,
+          "gramsPerPerson": 150
+        }
+      ]
+    },
+    {
+      "id": "shop-3",
+      "name": "Namuna shirinliklar uyi 3",
+      "category": "qandolat",
+      "districts": ["Mirobod", "Yakkasaroy", "Chilonzor"],
+      "telegram": "https://t.me/namuna_qandolat3",
+      "phone": "+998903334455",
+      "partner": true,
+      "hours": "08:30-22:30",
+      "items": [
+        {
+          "id": "t-8",
+          "name": "San Sebastian pishloqli tort",
+          "category": "tort",
+          "unit": "kg",
+          "price": 150000,
+          "kidFriendly": false,
+          "gramsPerPerson": 150
+        },
+        {
+          "id": "sh-1",
+          "name": "Mini eklerlar va profiterollar to'plami",
+          "category": "shirinlik",
+          "unit": "quti (12 dona)",
+          "price": 70000,
+          "kidFriendly": true
+        },
+        {
+          "id": "sh-2",
+          "name": "Shokoladli brauni to'plami",
+          "category": "shirinlik",
+          "unit": "to'plam",
+          "price": 60000,
+          "kidFriendly": true
+        }
+      ]
+    },
+    {
+      "id": "shop-4",
+      "name": "Namuna somsaxona 1",
+      "category": "somsa",
+      "districts": ["Chilonzor", "Uchtepa", "Yakkasaroy"],
+      "telegram": "https://t.me/namuna_somsa1",
+      "phone": "+998904445566",
+      "partner": true,
+      "hours": "08:00-20:00",
+      "items": [
+        {
+          "id": "f-1",
+          "name": "Mol go'shtli tandir somsa",
+          "category": "taom",
+          "unit": "dona",
+          "price": 9000,
+          "kidFriendly": true,
+          "perPersonQty": 2
+        },
+        {
+          "id": "f-2",
+          "name": "Qovoqli mayin somsa",
+          "category": "taom",
+          "unit": "dona",
+          "price": 6000,
+          "kidFriendly": true,
+          "perPersonQty": 2
+        },
+        {
+          "id": "f-3",
+          "name": "Tovuqli qatlama somsa",
+          "category": "taom",
+          "unit": "dona",
+          "price": 8000,
+          "kidFriendly": true,
+          "perPersonQty": 2
+        }
+      ]
+    },
+    {
+      "id": "shop-5",
+      "name": "Namuna somsaxona 2",
+      "category": "somsa",
+      "districts": ["Shayxontohur", "Olmazor", "Yunusobod"],
+      "telegram": "https://t.me/namuna_somsa2",
+      "phone": "+998905556677",
+      "partner": false,
+      "hours": "07:30-19:30",
+      "items": [
+        {
+          "id": "f-4",
+          "name": "Jizzaxcha katta somsa",
+          "category": "taom",
+          "unit": "dona",
+          "price": 14000,
+          "kidFriendly": false,
+          "perPersonQty": 1
+        },
+        {
+          "id": "f-5",
+          "name": "Pishloqli mini somsalar (bolalarbop)",
+          "category": "taom",
+          "unit": "dona",
+          "price": 7000,
+          "kidFriendly": true,
+          "perPersonQty": 2
+        }
+      ]
+    },
+    {
+      "id": "shop-6",
+      "name": "Namuna taomxona 1",
+      "category": "taomxona",
+      "districts": ["Chilonzor", "Mirobod", "Sergeli"],
+      "telegram": "https://t.me/namuna_taomxona1",
+      "phone": "+998906667788",
+      "partner": true,
+      "hours": "10:00-23:00",
+      "items": [
+        {
+          "id": "f-6",
+          "name": "Maxsus to'y oshi (go'sht va tuxum bilan)",
+          "category": "taom",
+          "unit": "porsiya",
+          "price": 32000,
+          "kidFriendly": true,
+          "perPersonQty": 1
+        },
+        {
+          "id": "f-7",
+          "name": "Qozon kabob (kartoshka bilan)",
+          "category": "taom",
+          "unit": "porsiya",
+          "price": 42000,
+          "kidFriendly": false,
+          "perPersonQty": 1
+        },
+        {
+          "id": "f-8",
+          "name": "Mini burger va kartoshka fri to'plami",
+          "category": "taom",
+          "unit": "to'plam",
+          "price": 28000,
+          "kidFriendly": true,
+          "perPersonQty": 1
+        }
+      ]
+    },
+    {
+      "id": "shop-7",
+      "name": "Namuna oshxona 2",
+      "category": "taomxona",
+      "districts": ["Yunusobod", "Mirzo Ulug'bek", "Shayxontohur"],
+      "telegram": "https://t.me/namuna_taomxona2",
+      "phone": "+998907778899",
+      "partner": false,
+      "hours": "09:00-22:00",
+      "items": [
+        {
+          "id": "f-9",
+          "name": "Choyxona palovi (an'anaviy)",
+          "category": "taom",
+          "unit": "porsiya",
+          "price": 29000,
+          "kidFriendly": true,
+          "perPersonQty": 1
+        },
+        {
+          "id": "f-10",
+          "name": "Tovuq shashlik to'plami",
+          "category": "taom",
+          "unit": "six",
+          "price": 16000,
+          "kidFriendly": true,
+          "perPersonQty": 1
+        },
+        {
+          "id": "f-11",
+          "name": "Mastava (uyda tayyorlash uchun retsept va masalliqlar)",
+          "category": "taom",
+          "unit": "qozon (8 kishilik)",
+          "price": 40000,
+          "kidFriendly": true,
+          "homeCooked": true,
+          "ingredientCost": 40000,
+          "perPersonQty": 1
+        },
+        {
+          "id": "f-12",
+          "name": "Qo'y go'shtli sho'rva",
+          "category": "taom",
+          "unit": "qozon (8 kishilik)",
+          "price": 55000,
+          "kidFriendly": true,
+          "homeCooked": true,
+          "ingredientCost": 55000,
+          "perPersonQty": 1
+        }
+      ]
+    },
+    {
+      "id": "shop-8",
+      "name": "Namuna taomxona 3",
+      "category": "taomxona",
+      "districts": ["Bektemir", "Yashnobod", "Sergeli"],
+      "telegram": "https://t.me/namuna_taomxona3",
+      "phone": "+998908889900",
+      "partner": false,
+      "hours": "10:00-21:00",
+      "items": [
+        {
+          "id": "f-13",
+          "name": "Qo'lda tugilgan go'shtli manti",
+          "category": "taom",
+          "unit": "porsiya (4 dona)",
+          "price": 26000,
+          "kidFriendly": true,
+          "perPersonQty": 1
+        },
+        {
+          "id": "f-14",
+          "name": "Tandirda pishgan tovuq tabaka",
+          "category": "taom",
+          "unit": "dona (4 kishilik)",
+          "price": 58000,
+          "kidFriendly": true,
+          "fixedGuestMax": 4
+        }
+      ]
+    },
+    {
+      "id": "shop-9",
+      "name": "Namuna mevafurush 1",
+      "category": "mevafurush",
+      "districts": ["Chilonzor", "Yakkasaroy", "Uchtepa"],
+      "telegram": "https://t.me/namuna_meva1",
+      "phone": "+998909990011",
+      "partner": true,
+      "hours": "08:00-21:00",
+      "items": [
+        {
+          "id": "m-1",
+          "name": "Mavsumiy mevalar to'plami (olma, nok, banan)",
+          "category": "meva",
+          "unit": "kg",
+          "price": 24000,
+          "kidFriendly": true,
+          "gramsPerPerson": 200
+        },
+        {
+          "id": "m-2",
+          "name": "Sitrus mevalar savati (apelsin, mandarin, kivi)",
+          "category": "meva",
+          "unit": "kg",
+          "price": 32000,
+          "kidFriendly": true,
+          "gramsPerPerson": 200
+        },
+        {
+          "id": "m-3",
+          "name": "Bolalar uchun saralangan shirin mevalar to'plami",
+          "category": "meva",
+          "unit": "kg",
+          "price": 28000,
+          "kidFriendly": true,
+          "gramsPerPerson": 200
+        }
+      ]
+    },
+    {
+      "id": "shop-10",
+      "name": "Namuna mevafurush 2",
+      "category": "mevafurush",
+      "districts": ["Mirzo Ulug'bek", "Yunusobod", "Yashnobod"],
+      "telegram": "https://t.me/namuna_meva2",
+      "phone": "+998900001122",
+      "partner": false,
+      "hours": "07:00-20:00",
+      "items": [
+        {
+          "id": "m-4",
+          "name": "Saralangan uzum va anor savati",
+          "category": "meva",
+          "unit": "kg",
+          "price": 35000,
+          "kidFriendly": true,
+          "gramsPerPerson": 200
+        },
+        {
+          "id": "m-5",
+          "name": "Qulupnay va rezavorlar to'plami",
+          "category": "meva",
+          "unit": "kg",
+          "price": 48000,
+          "kidFriendly": true,
+          "gramsPerPerson": 150
+        }
+      ]
+    },
+    {
+      "id": "shop-11",
+      "name": "Namuna ichimliklar do'koni",
+      "category": "supermarket",
+      "districts": ["Shayxontohur", "Olmazor", "Chilonzor", "Yunusobod", "Mirobod"],
+      "telegram": "https://t.me/namuna_ichimlik1",
+      "phone": "+998901239876",
+      "partner": true,
+      "hours": "08:00-23:00",
+      "items": [
+        {
+          "id": "d-1",
+          "name": "Tabiiy olma va o'rik sharbati (1L)",
+          "category": "ichimlik",
+          "unit": "litr",
+          "price": 14000,
+          "kidFriendly": true,
+          "litersPerPerson": 0.4
+        },
+        {
+          "id": "d-2",
+          "name": "Uy uslubidagi olcha kompoti (2L)",
+          "category": "ichimlik",
+          "unit": "dona (2L)",
+          "price": 18000,
+          "kidFriendly": true,
+          "litersPerPerson": 0.4
+        },
+        {
+          "id": "d-3",
+          "name": "Gazsiz tog' ma'danli suvi (1.5L)",
+          "category": "ichimlik",
+          "unit": "dona (1.5L)",
+          "price": 6000,
+          "kidFriendly": true,
+          "litersPerPerson": 0.3
+        },
+        {
+          "id": "d-4",
+          "name": "Kola / Fanta bayramona to'plami (1.5L)",
+          "category": "ichimlik",
+          "unit": "dona (1.5L)",
+          "price": 16000,
+          "kidFriendly": true,
+          "litersPerPerson": 0.4
+        },
+        {
+          "id": "d-5",
+          "name": "Bolalar uchun tabiiy mevali mors (1L)",
+          "category": "ichimlik",
+          "unit": "litr",
+          "price": 15000,
+          "kidFriendly": true,
+          "litersPerPerson": 0.4
+        }
+      ]
+    },
+    {
+      "id": "shop-12",
+      "name": "Namuna milliy shirinliklar uyi",
+      "category": "qandolat",
+      "districts": ["Chilonzor", "Mirobod", "Sergeli", "Bektemir"],
+      "telegram": "https://t.me/namuna_shirinlik1",
+      "phone": "+998909876543",
+      "partner": false,
+      "hours": null,
+      "items": [
+        {
+          "id": "sh-3",
+          "name": "Asalli sharqona paxlava to'plami",
+          "category": "shirinlik",
+          "unit": "kg",
+          "price": 85000,
+          "kidFriendly": true,
+          "gramsPerPerson": 100
+        },
+        {
+          "id": "sh-4",
+          "name": "An'anaviy asalli chak-chak",
+          "category": "shirinlik",
+          "unit": "quti (0.8 kg)",
+          "price": 50000,
+          "kidFriendly": true,
+          "gramsPerPerson": 100
+        },
+        {
+          "id": "sh-5",
+          "name": "Navro'z sumalaki va nisholda to'plami",
+          "category": "shirinlik",
+          "unit": "to'plam",
+          "price": 45000,
+          "kidFriendly": true
+        },
+        {
+          "id": "sh-6",
+          "name": "Shirin yong'oqli holva assortisi",
+          "category": "shirinlik",
+          "unit": "quti",
+          "price": 55000,
+          "kidFriendly": false
+        }
+      ]
+    }
+  ]
+}
+

@@ -127,10 +127,10 @@
           <label for="budget-input" class="form-label">
             3. Budjet, so'mda <span class="required">*</span>
           </label>
-          <input type="number" id="budget-input" class="form-control font-numeric" placeholder="500000" min="50000" step="10000" required>
+          <input type="number" id="budget-input" class="form-control font-numeric" value="500000" placeholder="500000" min="50000" step="10000" required>
           <div class="quick-buttons" aria-label="Tezkor byudjet tanlash">
             <button type="button" class="btn btn-chip" data-budget="300000">300 000</button>
-            <button type="button" class="btn btn-chip" data-budget="500000">500 000</button>
+            <button type="button" class="btn btn-chip active" data-budget="500000">500 000</button>
             <button type="button" class="btn btn-chip" data-budget="1000000">1 000 000</button>
           </div>
           <div id="budget-error" class="form-error hidden" role="alert"></div>
@@ -219,15 +219,15 @@
             </div>
           </article>
 
-          <!-- 2. Tort (yoki Shirinliklar) Kartasi -->
+          <!-- 2. Shirinliklar (yoki Tort) Kartasi -->
           <article class="card category-card" id="cat-card-cake">
             <div class="category-header">
-              <h4 id="cat-title-cake" class="category-title">🎂 Tort</h4>
+              <h4 id="cat-title-cake" class="category-title">🍬 Shirinliklar</h4>
               <span id="cat-subtotal-cake" class="badge badge-subtle font-numeric">0 so'm</span>
             </div>
             <div id="cat-items-cake" class="items-list"></div>
             <div class="category-footer">
-              <button type="button" id="cat-add-btn-cake" class="btn btn-sm btn-outline add-item-btn" data-category="tort">
+              <button type="button" id="cat-add-btn-cake" class="btn btn-sm btn-outline add-item-btn" data-category="cake">
                 + Mahsulot qo'shish
               </button>
             </div>
@@ -263,7 +263,7 @@
             <div id="budget-progress-bar" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
           </div>
           <p class="disclaimer-text">
-            ⚠️ Narxlar taxminiy. Buyurtma berishdan oldin do'kondan tasdiqlang.
+            ⚠️ Narxlar taxminiy (2026-yil noyabr holatiga ko'ra). Buyurtma berishdan oldin do'kondan tasdiqlang.
           </p>
         </div>
 
@@ -424,7 +424,37 @@
           <label class="form-label">Sana <span class="required">*</span></label>
           <div class="date-select-row">
             <select id="person-birth-day" class="form-control" aria-label="Kun" required>
-              <!-- 1 dan 31 gacha JS orqali to'ldiriladi -->
+              <option value="1">1-kun</option>
+              <option value="2">2-kun</option>
+              <option value="3">3-kun</option>
+              <option value="4">4-kun</option>
+              <option value="5">5-kun</option>
+              <option value="6">6-kun</option>
+              <option value="7">7-kun</option>
+              <option value="8">8-kun</option>
+              <option value="9">9-kun</option>
+              <option value="10">10-kun</option>
+              <option value="11">11-kun</option>
+              <option value="12">12-kun</option>
+              <option value="13">13-kun</option>
+              <option value="14">14-kun</option>
+              <option value="15">15-kun</option>
+              <option value="16">16-kun</option>
+              <option value="17">17-kun</option>
+              <option value="18">18-kun</option>
+              <option value="19">19-kun</option>
+              <option value="20">20-kun</option>
+              <option value="21">21-kun</option>
+              <option value="22">22-kun</option>
+              <option value="23">23-kun</option>
+              <option value="24">24-kun</option>
+              <option value="25">25-kun</option>
+              <option value="26">26-kun</option>
+              <option value="27">27-kun</option>
+              <option value="28">28-kun</option>
+              <option value="29">29-kun</option>
+              <option value="30">30-kun</option>
+              <option value="31">31-kun</option>
             </select>
             <select id="person-birth-month" class="form-control" aria-label="Oy" required>
               <option value="1">Yanvar</option>
@@ -499,7 +529,9 @@
     </div>
   </footer>
 
+  <script src="./data/shops.js"></script>
+  <script src="./data/foods.js"></script>
+  <script src="./data/drinks.js"></script>
   <script src="./app.js"></script>
 </body>
 </html>
-inti

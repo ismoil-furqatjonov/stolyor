@@ -1,0 +1,1877 @@
+{
+  "version": "2026-11",
+  "last_updated": "2026-yil noyabr",
+  "currency": "so'm",
+  "total_count": 99,
+  "foods": [
+    {
+      "id": "mastava",
+      "nomi": "Mastava",
+      "kategoriya": "shorva",
+      "rasm": "./images/foods/mastava.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 400,
+      "narx_porsiya": 32000,
+      "tadbirlar": [
+        "Iftor",
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Guruch, mol go'shti, sabzi, pomidor, zira",
+      "shop_category": "oshxona",
+      "homeCooked": true,
+      "ingredientCost": 24000
+    },
+    {
+      "id": "shorva",
+      "nomi": "Qo'y go'shtli sho'rva",
+      "kategoriya": "shorva",
+      "rasm": "./images/foods/shorva.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 400,
+      "narx_porsiya": 35000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Tug'ilgan kun (katta odamlar)",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Qo'y go'shti, kartoshka, sabzi, piyoz, ko'kat",
+      "shop_category": "oshxona",
+      "homeCooked": true,
+      "ingredientCost": 26000
+    },
+    {
+      "id": "moshxorda",
+      "nomi": "Moshxo'rda",
+      "kategoriya": "shorva",
+      "rasm": "./images/foods/moshxorda.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 400,
+      "narx_porsiya": 30000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Mosh, guruch, go'sht, sabzi, pomidor",
+      "shop_category": "oshxona",
+      "homeCooked": true,
+      "ingredientCost": 20000
+    },
+    {
+      "id": "lagmon-shorvali",
+      "nomi": "Lag'mon (sho'rvali)",
+      "kategoriya": "shorva",
+      "rasm": "./images/foods/lagmon-shorvali.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 450,
+      "narx_porsiya": 36000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Tug'ilgan kun (katta odamlar)",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten"
+      ],
+      "tarkib": "Cho'zma xamir, go'sht, sabzavotlar, sarimsoq, zira",
+      "shop_category": "taomxona"
+    },
+    {
+      "id": "chuchvara-shorva",
+      "nomi": "Chuchvara (sho'rva)",
+      "kategoriya": "shorva",
+      "rasm": "./images/foods/chuchvara-shorva.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 350,
+      "narx_porsiya": 32000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Tug'ilgan kun (bolalar)",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten",
+        "tuxum"
+      ],
+      "tarkib": "Mayda chuchvara, to'yimli sho'rva, ko'kat, piyoz",
+      "shop_category": "taomxona"
+    },
+    {
+      "id": "mampar",
+      "nomi": "Mampar",
+      "kategoriya": "shorva",
+      "rasm": "./images/foods/mampar.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 400,
+      "narx_porsiya": 33000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten",
+        "tuxum"
+      ],
+      "tarkib": "Kesma xamir, go'sht, bulg'ori, sarimsoq, tuxum",
+      "shop_category": "taomxona"
+    },
+    {
+      "id": "naryn-shorva",
+      "nomi": "Norin (sho'rvasi bilan)",
+      "kategoriya": "shorva",
+      "rasm": "./images/foods/naryn-shorva.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 350,
+      "narx_porsiya": 42000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Tug'ilgan kun (katta odamlar)",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten"
+      ],
+      "tarkib": "Yupqa kesma xamir, ot go'shti, qazi, zira",
+      "shop_category": "taomxona"
+    },
+    {
+      "id": "shavla",
+      "nomi": "Shavla",
+      "kategoriya": "shorva",
+      "rasm": "./images/foods/shavla.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 350,
+      "narx_porsiya": 28000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Guruch, go'sht, sabzi, pomidor, zira",
+      "shop_category": "oshxona",
+      "homeCooked": true,
+      "ingredientCost": 19000
+    },
+    {
+      "id": "dovdirak",
+      "nomi": "Dovdirak",
+      "kategoriya": "shorva",
+      "rasm": "./images/foods/dovdirak.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 350,
+      "narx_porsiya": 29000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten",
+        "tuxum"
+      ],
+      "tarkib": "Tuxumli sho'rva, go'sht, sabzavotlar, mayda xamir",
+      "shop_category": "taomxona"
+    },
+    {
+      "id": "moshkichiri",
+      "nomi": "Moshkichiri",
+      "kategoriya": "shorva",
+      "rasm": "./images/foods/moshkichiri.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 350,
+      "narx_porsiya": 30000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Mosh, guruch, go'sht, piyoz, dumba",
+      "shop_category": "oshxona",
+      "homeCooked": true,
+      "ingredientCost": 20000
+    },
+    {
+      "id": "palov-toshkent",
+      "nomi": "Toshkent to'y palovi",
+      "kategoriya": "palov",
+      "rasm": "./images/foods/palov-toshkent.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 400,
+      "narx_porsiya": 38000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Tug'ilgan kun (katta odamlar)",
+        "Tug'ilgan kun (bolalar)",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Alanga guruch, lahm go'sht, sariq sabzi, no'xat, mayiz",
+      "shop_category": "oshxona"
+    },
+    {
+      "id": "palov-samarqand",
+      "nomi": "Samarqandcha palov",
+      "kategoriya": "palov",
+      "rasm": "./images/foods/palov-samarqand.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 400,
+      "narx_porsiya": 37000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Tug'ilgan kun (katta odamlar)",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Qatlamli guruch, go'sht, qizil sabzi, no'xat, zira",
+      "shop_category": "oshxona"
+    },
+    {
+      "id": "palov-fargona",
+      "nomi": "Farg'onacha devzira palov",
+      "kategoriya": "palov",
+      "rasm": "./images/foods/palov-fargona.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 400,
+      "narx_porsiya": 42000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Tug'ilgan kun (katta odamlar)",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Devzira guruch, qovurilgan qo'y go'shti, zira, murch",
+      "shop_category": "oshxona"
+    },
+    {
+      "id": "palov-xorazm",
+      "nomi": "Xorazmcha chovli palov",
+      "kategoriya": "palov",
+      "rasm": "./images/foods/palov-xorazm.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 400,
+      "narx_porsiya": 39000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Qaynatilgan go'sht, oq sabzi, guruch, zira",
+      "shop_category": "oshxona"
+    },
+    {
+      "id": "palov-buxoro",
+      "nomi": "Buxorocha osh-i sofi",
+      "kategoriya": "palov",
+      "rasm": "./images/foods/palov-buxoro.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 400,
+      "narx_porsiya": 40000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Qaynatilgan go'sht, sariq sabzi, mayiz, za'faron",
+      "shop_category": "oshxona"
+    },
+    {
+      "id": "palov-bayram",
+      "nomi": "Maxsus bayram oshi",
+      "kategoriya": "palov",
+      "rasm": "./images/foods/palov-bayram.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 450,
+      "narx_porsiya": 48000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Tug'ilgan kun (katta odamlar)",
+        "Navro'z",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "tuxum"
+      ],
+      "tarkib": "Devzira guruch, go'sht, qazi, bedana tuxumi, no'xat",
+      "shop_category": "oshxona"
+    },
+    {
+      "id": "palov-oq",
+      "nomi": "Oq palov",
+      "kategoriya": "palov",
+      "rasm": "./images/foods/palov-oq.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 400,
+      "narx_porsiya": 35000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Mayin go'sht, sariq sabzi, guruch, sarimsoq",
+      "shop_category": "oshxona"
+    },
+    {
+      "id": "palov-sabzi",
+      "nomi": "Sabzi palov (parhezbop)",
+      "kategoriya": "palov",
+      "rasm": "./images/foods/palov-sabzi.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 400,
+      "narx_porsiya": 32000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Ko'p sabzili yengil guruch, mol go'shti, zira",
+      "shop_category": "oshxona"
+    },
+    {
+      "id": "dimlama",
+      "nomi": "Dimlama",
+      "kategoriya": "ikkinchi",
+      "rasm": "./images/foods/dimlama.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 400,
+      "narx_porsiya": 38000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Go'sht, karam, kartoshka, sabzi, pomidor",
+      "shop_category": "taomxona",
+      "homeCooked": true,
+      "ingredientCost": 28000
+    },
+    {
+      "id": "qozon-kabob",
+      "nomi": "Qozon kabob",
+      "kategoriya": "ikkinchi",
+      "rasm": "./images/foods/qozon-kabob.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 400,
+      "narx_porsiya": 45000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Tug'ilgan kun (katta odamlar)",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Qovurilgan go'sht, butun kartoshka, zira, piyoz",
+      "shop_category": "taomxona"
+    },
+    {
+      "id": "qovurdoq",
+      "nomi": "Qovurdoq",
+      "kategoriya": "ikkinchi",
+      "rasm": "./images/foods/qovurdoq.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 350,
+      "narx_porsiya": 42000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Barra go'sht, piyoz, kartoshka, zira",
+      "shop_category": "taomxona"
+    },
+    {
+      "id": "beshbarmoq-norin",
+      "nomi": "Beshbarmoq (norin)",
+      "kategoriya": "ikkinchi",
+      "rasm": "./images/foods/beshbarmoq-norin.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 350,
+      "narx_porsiya": 46000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Tug'ilgan kun (katta odamlar)",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten"
+      ],
+      "tarkib": "Mayda xamir, ot go'shti, qazi, zira",
+      "shop_category": "taomxona"
+    },
+    {
+      "id": "dolma",
+      "nomi": "Do'lma",
+      "kategoriya": "ikkinchi",
+      "rasm": "./images/foods/dolma.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 300,
+      "narx_porsiya": 35000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Iftor",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Uzum bargiga o'ralgan qiyma, guruch, ko'kat",
+      "shop_category": "taomxona"
+    },
+    {
+      "id": "jizz",
+      "nomi": "Jizzaxcha Jizz",
+      "kategoriya": "ikkinchi",
+      "rasm": "./images/foods/jizz.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 350,
+      "narx_porsiya": 48000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Tug'ilgan kun (katta odamlar)",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Barra go'sht, dumba, piyoz, pomidor",
+      "shop_category": "taomxona"
+    },
+    {
+      "id": "tandir-gosht",
+      "nomi": "Tandir go'sht",
+      "kategoriya": "ikkinchi",
+      "rasm": "./images/foods/tandir-gosht.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 350,
+      "narx_porsiya": 52000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Tug'ilgan kun (katta odamlar)",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Tandirda pishgan qo'y go'shti, archa tutuni, zira",
+      "shop_category": "taomxona"
+    },
+    {
+      "id": "qovurma-lagmon",
+      "nomi": "Qovurma lag'mon",
+      "kategoriya": "ikkinchi",
+      "rasm": "./images/foods/qovurma-lagmon.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 400,
+      "narx_porsiya": 36000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Tug'ilgan kun (katta odamlar)",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten",
+        "tuxum"
+      ],
+      "tarkib": "Qovurilgan xamir, go'sht, bulg'ori, sarimsoq",
+      "shop_category": "taomxona"
+    },
+    {
+      "id": "jigar-kabob-tova",
+      "nomi": "Qovurilgan jigar kabob",
+      "kategoriya": "ikkinchi",
+      "rasm": "./images/foods/jigar-kabob-tova.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 300,
+      "narx_porsiya": 32000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Qovurilgan jigar, piyoz, dumba, ko'kat",
+      "shop_category": "taomxona"
+    },
+    {
+      "id": "hasip",
+      "nomi": "Hasip",
+      "kategoriya": "ikkinchi",
+      "rasm": "./images/foods/hasip.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 300,
+      "narx_porsiya": 34000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Qo'y ichagi, jigar, guruch, ziravorlar",
+      "shop_category": "taomxona"
+    },
+    {
+      "id": "shashlik-qoy",
+      "nomi": "Qo'y go'shtli shashlik",
+      "kategoriya": "kabob",
+      "rasm": "./images/foods/shashlik-qoy.webp",
+      "birlik": "six",
+      "porsiya_gramm": 120,
+      "narx_porsiya": 18000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Tug'ilgan kun (katta odamlar)",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Qo'y go'shti, dumba, piyoz, zira, murch",
+      "shop_category": "kabobxona",
+      "perPersonQty": 1
+    },
+    {
+      "id": "shashlik-mol",
+      "nomi": "Mol go'shtli shashlik",
+      "kategoriya": "kabob",
+      "rasm": "./images/foods/shashlik-mol.webp",
+      "birlik": "six",
+      "porsiya_gramm": 120,
+      "narx_porsiya": 17000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Tug'ilgan kun (katta odamlar)",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Mol go'shti, mayin charvi, piyoz, kashnich",
+      "shop_category": "kabobxona",
+      "perPersonQty": 1
+    },
+    {
+      "id": "shashlik-tovuq",
+      "nomi": "Tovuqli shashlik",
+      "kategoriya": "kabob",
+      "rasm": "./images/foods/shashlik-tovuq.webp",
+      "birlik": "six",
+      "porsiya_gramm": 130,
+      "narx_porsiya": 15000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Tug'ilgan kun (bolalar)",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Tovuq filesi, marinad, ziravorlar, piyoz",
+      "shop_category": "kabobxona",
+      "kidFriendly": true,
+      "perPersonQty": 1
+    },
+    {
+      "id": "lyulya-kabob",
+      "nomi": "Lyulya kabob",
+      "kategoriya": "kabob",
+      "rasm": "./images/foods/lyulya-kabob.webp",
+      "birlik": "six",
+      "porsiya_gramm": 130,
+      "narx_porsiya": 16000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Tug'ilgan kun (katta odamlar)",
+        "Tug'ilgan kun (bolalar)",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Mayin qiyma, piyoz, dumba, kashnich",
+      "shop_category": "kabobxona",
+      "kidFriendly": true,
+      "perPersonQty": 1
+    },
+    {
+      "id": "qiyma-kabob",
+      "nomi": "Qiyma kabob",
+      "kategoriya": "kabob",
+      "rasm": "./images/foods/qiyma-kabob.webp",
+      "birlik": "six",
+      "porsiya_gramm": 120,
+      "narx_porsiya": 16000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Qiyma mol go'shti, dumba yog'i, zira",
+      "shop_category": "kabobxona",
+      "perPersonQty": 1
+    },
+    {
+      "id": "jigar-kabob-six",
+      "nomi": "Jigar kabob (sixda)",
+      "kategoriya": "kabob",
+      "rasm": "./images/foods/jigar-kabob-six.webp",
+      "birlik": "six",
+      "porsiya_gramm": 120,
+      "narx_porsiya": 14000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Jigar bo'laklari, parda yog'i, murch, piyoz",
+      "shop_category": "kabobxona",
+      "perPersonQty": 1
+    },
+    {
+      "id": "dumba-kabob",
+      "nomi": "Dumba kabob",
+      "kategoriya": "kabob",
+      "rasm": "./images/foods/dumba-kabob.webp",
+      "birlik": "six",
+      "porsiya_gramm": 100,
+      "narx_porsiya": 14000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Qo'y dumbasi, zira, tuz, piyoz",
+      "shop_category": "kabobxona",
+      "perPersonQty": 1
+    },
+    {
+      "id": "tandir-kabob",
+      "nomi": "Tandir kabob",
+      "kategoriya": "kabob",
+      "rasm": "./images/foods/tandir-kabob.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 300,
+      "narx_porsiya": 48000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Tug'ilgan kun (katta odamlar)",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Tandirda pishgan barra go'sht, zira, archa",
+      "shop_category": "kabobxona"
+    },
+    {
+      "id": "somsa-tandir",
+      "nomi": "Tandir somsa (go'shtli)",
+      "kategoriya": "xamir",
+      "rasm": "./images/foods/somsa-tandir.webp",
+      "birlik": "dona",
+      "porsiya_gramm": 130,
+      "narx_porsiya": 9000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Iftor",
+        "Tug'ilgan kun (katta odamlar)",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten"
+      ],
+      "tarkib": "Qatlama xamir, maydalangan go'sht, piyoz, zira",
+      "shop_category": "somsa",
+      "perPersonQty": 2
+    },
+    {
+      "id": "somsa-qatlama",
+      "nomi": "Qatlama somsa",
+      "kategoriya": "xamir",
+      "rasm": "./images/foods/somsa-qatlama.webp",
+      "birlik": "dona",
+      "porsiya_gramm": 120,
+      "narx_porsiya": 10000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten",
+        "sut"
+      ],
+      "tarkib": "Qavatli xamir, mol go'shti, saryog', piyoz",
+      "shop_category": "somsa",
+      "perPersonQty": 2
+    },
+    {
+      "id": "somsa-kok",
+      "nomi": "Ko'k somsa",
+      "kategoriya": "xamir",
+      "rasm": "./images/foods/somsa-kok.webp",
+      "birlik": "dona",
+      "porsiya_gramm": 110,
+      "narx_porsiya": 7000,
+      "tadbirlar": [
+        "Navro'z",
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten"
+      ],
+      "tarkib": "Yalpiz, ismaloq, ko'k piyoz, dumba jizzasi",
+      "shop_category": "somsa",
+      "perPersonQty": 2
+    },
+    {
+      "id": "somsa-kartoshkali",
+      "nomi": "Kartoshkali somsa",
+      "kategoriya": "xamir",
+      "rasm": "./images/foods/somsa-kartoshkali.webp",
+      "birlik": "dona",
+      "porsiya_gramm": 120,
+      "narx_porsiya": 6000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten"
+      ],
+      "tarkib": "Kartoshka, piyoz, qora murch, yog'",
+      "shop_category": "somsa",
+      "perPersonQty": 2
+    },
+    {
+      "id": "somsa-qovoqli",
+      "nomi": "Qovoqli somsa",
+      "kategoriya": "xamir",
+      "rasm": "./images/foods/somsa-qovoqli.webp",
+      "birlik": "dona",
+      "porsiya_gramm": 120,
+      "narx_porsiya": 7000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten"
+      ],
+      "tarkib": "Shirin qovoq, piyoz, dumba yog'i, zira",
+      "shop_category": "somsa",
+      "perPersonQty": 2
+    },
+    {
+      "id": "manti",
+      "nomi": "Go'shtli manti",
+      "kategoriya": "xamir",
+      "rasm": "./images/foods/manti.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 300,
+      "narx_porsiya": 28000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Tug'ilgan kun (bolalar)",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten"
+      ],
+      "tarkib": "Mayin xamir, go'sht, piyoz, qora murch",
+      "shop_category": "taomxona",
+      "kidFriendly": true,
+      "perPersonQty": 1
+    },
+    {
+      "id": "chuchvara-qovurma",
+      "nomi": "Qovurilgan chuchvara",
+      "kategoriya": "xamir",
+      "rasm": "./images/foods/chuchvara-qovurma.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 200,
+      "narx_porsiya": 26000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Tug'ilgan kun (bolalar)",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten",
+        "tuxum"
+      ],
+      "tarkib": "Qarsildoq mayda chuchvara, go'sht, piyoz",
+      "shop_category": "taomxona",
+      "kidFriendly": true
+    },
+    {
+      "id": "xonim",
+      "nomi": "Toshkentcha xonim",
+      "kategoriya": "xamir",
+      "rasm": "./images/foods/xonim.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 250,
+      "narx_porsiya": 18000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten"
+      ],
+      "tarkib": "Yupqa o'rama xamir, kartoshka, piyoz, tomat sousi",
+      "shop_category": "taomxona",
+      "kidFriendly": true
+    },
+    {
+      "id": "gumma",
+      "nomi": "Gumma",
+      "kategoriya": "xamir",
+      "rasm": "./images/foods/gumma.webp",
+      "birlik": "dona",
+      "porsiya_gramm": 100,
+      "narx_porsiya": 6000,
+      "tadbirlar": [
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten"
+      ],
+      "tarkib": "Qovurilgan xamir, jigar qiymasi, tomat sousi",
+      "shop_category": "somsa"
+    },
+    {
+      "id": "patir",
+      "nomi": "Samarqand patir noni",
+      "kategoriya": "xamir",
+      "rasm": "./images/foods/patir.webp",
+      "birlik": "dona",
+      "porsiya_gramm": 350,
+      "narx_porsiya": 8000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Iftor",
+        "Navro'z",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten",
+        "sut",
+        "kunjut"
+      ],
+      "tarkib": "Sut, saryog', un, sedana, kunjut",
+      "shop_category": "nonvoyxona",
+      "fixedGuestMax": 4
+    },
+    {
+      "id": "obi-non",
+      "nomi": "Tandir obi non",
+      "kategoriya": "xamir",
+      "rasm": "./images/foods/obi-non.webp",
+      "birlik": "dona",
+      "porsiya_gramm": 250,
+      "narx_porsiya": 4000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Iftor",
+        "Navro'z",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten"
+      ],
+      "tarkib": "Bug'doy uni, xamirturush, tuz, sedana",
+      "shop_category": "nonvoyxona",
+      "fixedGuestMax": 3
+    },
+    {
+      "id": "lochira",
+      "nomi": "Lochira non",
+      "kategoriya": "xamir",
+      "rasm": "./images/foods/lochira.webp",
+      "birlik": "dona",
+      "porsiya_gramm": 200,
+      "narx_porsiya": 6000,
+      "tadbirlar": [
+        "Navro'z",
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten",
+        "sut",
+        "kunjut"
+      ],
+      "tarkib": "Yupqa sutli xamir, saryog', kunjut",
+      "shop_category": "nonvoyxona",
+      "fixedGuestMax": 3
+    },
+    {
+      "id": "qatlama",
+      "nomi": "Qatlama",
+      "kategoriya": "xamir",
+      "rasm": "./images/foods/qatlama.webp",
+      "birlik": "dona",
+      "porsiya_gramm": 250,
+      "narx_porsiya": 12000,
+      "tadbirlar": [
+        "Navro'z",
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten",
+        "sut"
+      ],
+      "tarkib": "Qat-qat xamir, saryog', piyoz",
+      "shop_category": "nonvoyxona",
+      "fixedGuestMax": 3
+    },
+    {
+      "id": "bogirsoq",
+      "nomi": "Bo'g'irsoq",
+      "kategoriya": "xamir",
+      "rasm": "./images/foods/bogirsoq.webp",
+      "birlik": "tovoq",
+      "porsiya_gramm": 300,
+      "narx_porsiya": 16000,
+      "tadbirlar": [
+        "Navro'z",
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten",
+        "tuxum"
+      ],
+      "tarkib": "Qovurilgan xamir sharchalari, shakar",
+      "shop_category": "nonvoyxona",
+      "fixedGuestMax": 4
+    },
+    {
+      "id": "kulcha",
+      "nomi": "Shirmoy kulcha",
+      "kategoriya": "xamir",
+      "rasm": "./images/foods/kulcha.webp",
+      "birlik": "dona",
+      "porsiya_gramm": 150,
+      "narx_porsiya": 5000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten",
+        "sut"
+      ],
+      "tarkib": "Sutli shirmoy xamir, sedana, saryog'",
+      "shop_category": "nonvoyxona",
+      "fixedGuestMax": 2
+    },
+    {
+      "id": "chebureki",
+      "nomi": "Chebureki",
+      "kategoriya": "xamir",
+      "rasm": "./images/foods/chebureki.webp",
+      "birlik": "dona",
+      "porsiya_gramm": 140,
+      "narx_porsiya": 12000,
+      "tadbirlar": [
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten"
+      ],
+      "tarkib": "Qarsildoq xamir, sershira go'sht qiymasi, piyoz",
+      "shop_category": "somsa",
+      "perPersonQty": 1
+    },
+    {
+      "id": "achichuk",
+      "nomi": "Achichuk salati",
+      "kategoriya": "salat",
+      "rasm": "./images/foods/achichuk.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 200,
+      "narx_porsiya": 12000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Tug'ilgan kun (katta odamlar)",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Yupqa pomidor, piyoz, achchiq qalampir, rayhon",
+      "shop_category": "taomxona",
+      "fixedGuestMax": 3
+    },
+    {
+      "id": "toshkent-salati",
+      "nomi": "Toshkent salati",
+      "kategoriya": "salat",
+      "rasm": "./images/foods/toshkent-salati.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 200,
+      "narx_porsiya": 22000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Tug'ilgan kun (katta odamlar)",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "tuxum"
+      ],
+      "tarkib": "Mol tili, turp, qovurilgan piyoz, mayonez",
+      "shop_category": "taomxona",
+      "fixedGuestMax": 3
+    },
+    {
+      "id": "bodring-pomidor",
+      "nomi": "Bodring-pomidor salati",
+      "kategoriya": "salat",
+      "rasm": "./images/foods/bodring-pomidor.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 200,
+      "narx_porsiya": 14000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Tug'ilgan kun (bolalar)",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Barra bodring, pomidor, ko'katlar, o'simlik yog'i",
+      "shop_category": "taomxona",
+      "fixedGuestMax": 3
+    },
+    {
+      "id": "koreyscha-sabzi",
+      "nomi": "Koreyscha sabzi",
+      "kategoriya": "salat",
+      "rasm": "./images/foods/koreyscha-sabzi.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 180,
+      "narx_porsiya": 12000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Somoncha sabzi, sarimsoq, qizdirilgan yog', kashnich",
+      "shop_category": "taomxona",
+      "fixedGuestMax": 4
+    },
+    {
+      "id": "baqlajon-salat",
+      "nomi": "Baqlajon salat",
+      "kategoriya": "salat",
+      "rasm": "./images/foods/baqlajon-salat.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 200,
+      "narx_porsiya": 18000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "soya"
+      ],
+      "tarkib": "Qovurilgan baqlajon, pomidor, sarimsoq, soya sousi",
+      "shop_category": "taomxona",
+      "fixedGuestMax": 3
+    },
+    {
+      "id": "olivye",
+      "nomi": "Olivye salati",
+      "kategoriya": "salat",
+      "rasm": "./images/foods/olivye.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 220,
+      "narx_porsiya": 20000,
+      "tadbirlar": [
+        "Tug'ilgan kun (katta odamlar)",
+        "Tug'ilgan kun (bolalar)",
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "tuxum"
+      ],
+      "tarkib": "Qaynatilgan go'sht, kartoshka, no'xat, bodring, mayonez",
+      "shop_category": "taomxona",
+      "fixedGuestMax": 3
+    },
+    {
+      "id": "mimoza",
+      "nomi": "Mimoza salati",
+      "kategoriya": "salat",
+      "rasm": "./images/foods/mimoza.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 200,
+      "narx_porsiya": 18000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "baliq",
+        "tuxum",
+        "sut"
+      ],
+      "tarkib": "Konserva baliq, qaynatilgan tuxum, pishloq, mayonez",
+      "shop_category": "taomxona",
+      "fixedGuestMax": 3
+    },
+    {
+      "id": "selyodka-shuba",
+      "nomi": "Selyodka shuba salati",
+      "kategoriya": "salat",
+      "rasm": "./images/foods/selyodka-shuba.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 220,
+      "narx_porsiya": 22000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "baliq",
+        "tuxum"
+      ],
+      "tarkib": "Selyodka balig'i, lavlagi, kartoshka, sabzi, mayonez",
+      "shop_category": "taomxona",
+      "fixedGuestMax": 3
+    },
+    {
+      "id": "kok-salat",
+      "nomi": "Ko'k salat",
+      "kategoriya": "salat",
+      "rasm": "./images/foods/kok-salat.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 180,
+      "narx_porsiya": 14000,
+      "tadbirlar": [
+        "Navro'z",
+        "Iftor",
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Salat bargi, bodring, rediska, ko'k piyoz, zaytun yog'i",
+      "shop_category": "taomxona",
+      "fixedGuestMax": 3
+    },
+    {
+      "id": "qatiqli-salat",
+      "nomi": "Qatiqli bahoriy salat",
+      "kategoriya": "salat",
+      "rasm": "./images/foods/qatiqli-salat.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 200,
+      "narx_porsiya": 15000,
+      "tadbirlar": [
+        "Iftor",
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "sut"
+      ],
+      "tarkib": "Suzma/qatiq, rediska, barra bodring, ko'k piyoz",
+      "shop_category": "taomxona",
+      "fixedGuestMax": 3
+    },
+    {
+      "id": "halva",
+      "nomi": "Samarqand holvasi",
+      "kategoriya": "shirinlik",
+      "rasm": "./images/foods/halva.webp",
+      "birlik": "quti",
+      "porsiya_gramm": 200,
+      "narx_porsiya": 18000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Iftor",
+        "Navro'z",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten",
+        "sut",
+        "yong'oq"
+      ],
+      "tarkib": "Un, shakar, saryog', yong'oq mag'zi",
+      "shop_category": "qandolat",
+      "fixedGuestMax": 4
+    },
+    {
+      "id": "navvot",
+      "nomi": "Zafaronli navvot",
+      "kategoriya": "shirinlik",
+      "rasm": "./images/foods/navvot.webp",
+      "birlik": "to'plam",
+      "porsiya_gramm": 250,
+      "narx_porsiya": 14000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Iftor",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Kristallashgan uzum sharbati, shakar, za'faron",
+      "shop_category": "qandolat",
+      "fixedGuestMax": 6
+    },
+    {
+      "id": "parvarda",
+      "nomi": "Oppoq parvarda",
+      "kategoriya": "shirinlik",
+      "rasm": "./images/foods/parvarda.webp",
+      "birlik": "quti",
+      "porsiya_gramm": 250,
+      "narx_porsiya": 12000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Navro'z",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten"
+      ],
+      "tarkib": "Shakar qiyomi, bug'doy uni, limon kislotasi",
+      "shop_category": "qandolat",
+      "fixedGuestMax": 5
+    },
+    {
+      "id": "pashmak",
+      "nomi": "Pashmak",
+      "kategoriya": "shirinlik",
+      "rasm": "./images/foods/pashmak.webp",
+      "birlik": "quti",
+      "porsiya_gramm": 200,
+      "narx_porsiya": 16000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten"
+      ],
+      "tarkib": "Qandolat iplari, qovurilgan un, shakar",
+      "shop_category": "qandolat",
+      "fixedGuestMax": 4
+    },
+    {
+      "id": "chak-chak",
+      "nomi": "Asalli chak-chak",
+      "kategoriya": "shirinlik",
+      "rasm": "./images/foods/chak-chak.webp",
+      "birlik": "quti",
+      "porsiya_gramm": 300,
+      "narx_porsiya": 28000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Navro'z",
+        "Tug'ilgan kun (katta odamlar)",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten",
+        "tuxum",
+        "asal",
+        "yong'oq"
+      ],
+      "tarkib": "Mayda xamir bo'laklari, tabiiy asal, yong'oq",
+      "shop_category": "qandolat",
+      "fixedGuestMax": 5
+    },
+    {
+      "id": "baklava",
+      "nomi": "Sharqona baklava (paxlava)",
+      "kategoriya": "shirinlik",
+      "rasm": "./images/foods/baklava.webp",
+      "birlik": "quti",
+      "porsiya_gramm": 250,
+      "narx_porsiya": 35000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Iftor",
+        "Navro'z",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten",
+        "yong'oq",
+        "asal"
+      ],
+      "tarkib": "Qatlama yupqa xamir, maydalangan yong'oq, asal qiyomi",
+      "shop_category": "qandolat",
+      "fixedGuestMax": 4
+    },
+    {
+      "id": "nishalda",
+      "nomi": "Nishalda",
+      "kategoriya": "shirinlik",
+      "rasm": "./images/foods/nishalda.webp",
+      "birlik": "banka",
+      "porsiya_gramm": 250,
+      "narx_porsiya": 16000,
+      "tadbirlar": [
+        "Navro'z",
+        "Iftor",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "tuxum"
+      ],
+      "tarkib": "Yetmak ildizi, tuxum oqi, shakar qiyomi",
+      "shop_category": "qandolat",
+      "fixedGuestMax": 4
+    },
+    {
+      "id": "kishmish",
+      "nomi": "Saralangan kishmish",
+      "kategoriya": "shirinlik",
+      "rasm": "./images/foods/kishmish.webp",
+      "birlik": "to'plam",
+      "porsiya_gramm": 200,
+      "narx_porsiya": 18000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Iftor",
+        "Navro'z",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Oftobda quritilgan danaksiz qora/sariq uzum",
+      "shop_category": "qandolat",
+      "fixedGuestMax": 4
+    },
+    {
+      "id": "yongoq",
+      "nomi": "Tozalangan yong'oq mag'zi",
+      "kategoriya": "shirinlik",
+      "rasm": "./images/foods/yongoq.webp",
+      "birlik": "to'plam",
+      "porsiya_gramm": 150,
+      "narx_porsiya": 22000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Navro'z",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "yong'oq"
+      ],
+      "tarkib": "Saralangan tozalangan oq yong'oq mag'zi",
+      "shop_category": "qandolat",
+      "fixedGuestMax": 4
+    },
+    {
+      "id": "bodom",
+      "nomi": "Qovurilgan bodom",
+      "kategoriya": "shirinlik",
+      "rasm": "./images/foods/bodom.webp",
+      "birlik": "to'plam",
+      "porsiya_gramm": 150,
+      "narx_porsiya": 26000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Navro'z",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "yong'oq"
+      ],
+      "tarkib": "Qovurilgan shirin bodom mag'zi",
+      "shop_category": "qandolat",
+      "fixedGuestMax": 4
+    },
+    {
+      "id": "pista",
+      "nomi": "Tuzlangan pista",
+      "kategoriya": "shirinlik",
+      "rasm": "./images/foods/pista.webp",
+      "birlik": "to'plam",
+      "porsiya_gramm": 150,
+      "narx_porsiya": 30000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "yong'oq"
+      ],
+      "tarkib": "Qovurilgan tuzlangan pista",
+      "shop_category": "qandolat",
+      "fixedGuestMax": 4
+    },
+    {
+      "id": "mayiz",
+      "nomi": "Qora va sariq mayiz",
+      "kategoriya": "shirinlik",
+      "rasm": "./images/foods/mayiz.webp",
+      "birlik": "to'plam",
+      "porsiya_gramm": 200,
+      "narx_porsiya": 16000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Iftor",
+        "Navro'z",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Yirik shirin oftobiy mayiz",
+      "shop_category": "qandolat",
+      "fixedGuestMax": 4
+    },
+    {
+      "id": "quritilgan-orik",
+      "nomi": "Quritilgan o'rik (turshak)",
+      "kategoriya": "shirinlik",
+      "rasm": "./images/foods/quritilgan-orik.webp",
+      "birlik": "to'plam",
+      "porsiya_gramm": 200,
+      "narx_porsiya": 18000,
+      "tadbirlar": [
+        "Iftor",
+        "Navro'z",
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Tabiiy quritilgan shirin o'rik qoqi",
+      "shop_category": "qandolat",
+      "fixedGuestMax": 4
+    },
+    {
+      "id": "anjir",
+      "nomi": "Quritilgan anjir",
+      "kategoriya": "shirinlik",
+      "rasm": "./images/foods/anjir.webp",
+      "birlik": "to'plam",
+      "porsiya_gramm": 180,
+      "narx_porsiya": 24000,
+      "tadbirlar": [
+        "Iftor",
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Shirin tabiiy oq anjir qoqisi",
+      "shop_category": "qandolat",
+      "fixedGuestMax": 4
+    },
+    {
+      "id": "napoleon",
+      "nomi": "Klassik Napoleon",
+      "kategoriya": "shirinlik",
+      "rasm": "./images/foods/napoleon.webp",
+      "birlik": "kg",
+      "porsiya_gramm": 1000,
+      "narx_porsiya": 90000,
+      "tadbirlar": [
+        "Tug'ilgan kun (katta odamlar)",
+        "Tug'ilgan kun (bolalar)",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten",
+        "sut",
+        "tuxum"
+      ],
+      "tarkib": "Qarsildoq qatlama xamir, vanilli qaymoq krem",
+      "shop_category": "qandolat",
+      "isCake": true
+    },
+    {
+      "id": "medovik",
+      "nomi": "Asalli Medovik",
+      "kategoriya": "shirinlik",
+      "rasm": "./images/foods/medovik.webp",
+      "birlik": "kg",
+      "porsiya_gramm": 1000,
+      "narx_porsiya": 95000,
+      "tadbirlar": [
+        "Tug'ilgan kun (katta odamlar)",
+        "Tug'ilgan kun (bolalar)",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten",
+        "sut",
+        "tuxum",
+        "asal"
+      ],
+      "tarkib": "Asalli mayin korjlar, smetana kremi",
+      "shop_category": "qandolat",
+      "isCake": true
+    },
+    {
+      "id": "pirojniy",
+      "nomi": "Pirojniy to'plami",
+      "kategoriya": "shirinlik",
+      "rasm": "./images/foods/pirojniy.webp",
+      "birlik": "to'plam",
+      "porsiya_gramm": 300,
+      "narx_porsiya": 32000,
+      "tadbirlar": [
+        "Tug'ilgan kun (bolalar)",
+        "Tug'ilgan kun (katta odamlar)",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten",
+        "sut",
+        "tuxum"
+      ],
+      "tarkib": "Biskvit, shokoladli ganash, mevali bezak",
+      "shop_category": "qandolat",
+      "kidFriendly": true,
+      "fixedGuestMax": 4
+    },
+    {
+      "id": "eklerlar",
+      "nomi": "Krem-eklerlar",
+      "kategoriya": "shirinlik",
+      "rasm": "./images/foods/eklerlar.webp",
+      "birlik": "quti",
+      "porsiya_gramm": 250,
+      "narx_porsiya": 28000,
+      "tadbirlar": [
+        "Tug'ilgan kun (bolalar)",
+        "Tug'ilgan kun (katta odamlar)",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten",
+        "sut",
+        "tuxum"
+      ],
+      "tarkib": "Pishirilgan choux xamiri, quyuq sutli krem",
+      "shop_category": "qandolat",
+      "kidFriendly": true,
+      "fixedGuestMax": 4
+    },
+    {
+      "id": "vafli",
+      "nomi": "Shokoladli vafli",
+      "kategoriya": "shirinlik",
+      "rasm": "./images/foods/vafli.webp",
+      "birlik": "quti",
+      "porsiya_gramm": 250,
+      "narx_porsiya": 16000,
+      "tadbirlar": [
+        "Tug'ilgan kun (bolalar)",
+        "Boshqa"
+      ],
+      "allergenlar": [
+        "glyuten",
+        "sut"
+      ],
+      "tarkib": "Qarsildoq qatlamli vafli, shokoladli krem",
+      "shop_category": "qandolat",
+      "kidFriendly": true,
+      "fixedGuestMax": 4
+    },
+    {
+      "id": "tort",
+      "nomi": "Bayramona tort (maxsus bezatilgan)",
+      "kategoriya": "shirinlik",
+      "rasm": "./images/foods/tort.webp",
+      "birlik": "dona",
+      "porsiya_gramm": 1200,
+      "narx_porsiya": 120000,
+      "tadbirlar": [
+        "Tug'ilgan kun (bolalar)",
+        "Tug'ilgan kun (katta odamlar)",
+        "Yubiley"
+      ],
+      "allergenlar": [
+        "glyuten",
+        "sut",
+        "tuxum"
+      ],
+      "tarkib": "Biskvit korjlar, qaymoqli krem, mevali bezak",
+      "shop_category": "qandolat",
+      "isCake": true,
+      "fixedGuestMax": 8
+    },
+    {
+      "id": "qovun",
+      "nomi": "Shirin Mirzacho'l qovuni",
+      "kategoriya": "meva",
+      "rasm": "./images/foods/qovun.webp",
+      "birlik": "dona",
+      "porsiya_gramm": 2500,
+      "narx_porsiya": 25000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Iftor",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Shirin mirzacho'l qovuni tilimlari",
+      "shop_category": "mevafurush",
+      "fixedGuestMax": 8
+    },
+    {
+      "id": "tarvuz",
+      "nomi": "Qizil sershira tarvuz",
+      "kategoriya": "meva",
+      "rasm": "./images/foods/tarvuz.webp",
+      "birlik": "dona",
+      "porsiya_gramm": 4000,
+      "narx_porsiya": 24000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Iftor",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Qizil shirin sershira tarvuz",
+      "shop_category": "mevafurush",
+      "fixedGuestMax": 10
+    },
+    {
+      "id": "uzum",
+      "nomi": "Saralangan uzum (Husayni/Toyfi)",
+      "kategoriya": "meva",
+      "rasm": "./images/foods/uzum.webp",
+      "birlik": "kg",
+      "porsiya_gramm": 1000,
+      "narx_porsiya": 26000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Navro'z",
+        "Iftor",
+        "Tug'ilgan kun (katta odamlar)",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Qora va oq saralangan uzum",
+      "shop_category": "mevafurush"
+    },
+    {
+      "id": "anor",
+      "nomi": "Shirin qizil anor",
+      "kategoriya": "meva",
+      "rasm": "./images/foods/anor.webp",
+      "birlik": "kg",
+      "porsiya_gramm": 1000,
+      "narx_porsiya": 32000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Shirin qizil anor mevalari",
+      "shop_category": "mevafurush"
+    },
+    {
+      "id": "olma",
+      "nomi": "Meva savati: olma assortisi",
+      "kategoriya": "meva",
+      "rasm": "./images/foods/olma.webp",
+      "birlik": "kg",
+      "porsiya_gramm": 1000,
+      "narx_porsiya": 16000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Navro'z",
+        "Tug'ilgan kun (bolalar)",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Qizil va yashil qarsildoq olmadan assorti",
+      "shop_category": "mevafurush"
+    },
+    {
+      "id": "nok",
+      "nomi": "Sershira nok",
+      "kategoriya": "meva",
+      "rasm": "./images/foods/nok.webp",
+      "birlik": "kg",
+      "porsiya_gramm": 1000,
+      "narx_porsiya": 24000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Mayin sershira shirin nok",
+      "shop_category": "mevafurush"
+    },
+    {
+      "id": "shaftoli",
+      "nomi": "Barra shaftoli",
+      "kategoriya": "meva",
+      "rasm": "./images/foods/shaftoli.webp",
+      "birlik": "kg",
+      "porsiya_gramm": 1000,
+      "narx_porsiya": 28000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Sershira yangi shaftoli",
+      "shop_category": "mevafurush"
+    },
+    {
+      "id": "orik-meva",
+      "nomi": "Qandak o'rik",
+      "kategoriya": "meva",
+      "rasm": "./images/foods/orik-meva.webp",
+      "birlik": "kg",
+      "porsiya_gramm": 1000,
+      "narx_porsiya": 22000,
+      "tadbirlar": [
+        "Oilaviy ziyofat",
+        "Navro'z",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Shirin yangi qandak o'rik",
+      "shop_category": "mevafurush"
+    },
+    {
+      "id": "banan",
+      "nomi": "Banan",
+      "kategoriya": "meva",
+      "rasm": "./images/foods/banan.webp",
+      "birlik": "kg",
+      "porsiya_gramm": 1000,
+      "narx_porsiya": 25000,
+      "tadbirlar": [
+        "Tug'ilgan kun (bolalar)",
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Yangi import bananlar",
+      "shop_category": "mevafurush",
+      "kidFriendly": true
+    },
+    {
+      "id": "mandarin",
+      "nomi": "Shirin mandarin",
+      "kategoriya": "meva",
+      "rasm": "./images/foods/mandarin.webp",
+      "birlik": "kg",
+      "porsiya_gramm": 1000,
+      "narx_porsiya": 28000,
+      "tadbirlar": [
+        "Tug'ilgan kun (bolalar)",
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Danaksiz shirin mandarin",
+      "shop_category": "mevafurush",
+      "kidFriendly": true
+    },
+    {
+      "id": "apelsin",
+      "nomi": "Apelsin tilimlari",
+      "kategoriya": "meva",
+      "rasm": "./images/foods/apelsin.webp",
+      "birlik": "kg",
+      "porsiya_gramm": 1000,
+      "narx_porsiya": 26000,
+      "tadbirlar": [
+        "Tug'ilgan kun (bolalar)",
+        "Oilaviy ziyofat",
+        "Boshqa"
+      ],
+      "allergenlar": [],
+      "tarkib": "Sitrusli barra apelsin tilimlari",
+      "shop_category": "mevafurush",
+      "kidFriendly": true
+    },
+    {
+      "id": "sumalak",
+      "nomi": "Navro'z sumalaki",
+      "kategoriya": "mavsumiy",
+      "rasm": "./images/foods/sumalak.webp",
+      "birlik": "banka",
+      "porsiya_gramm": 500,
+      "narx_porsiya": 30000,
+      "tadbirlar": [
+        "Navro'z"
+      ],
+      "allergenlar": [
+        "glyuten"
+      ],
+      "tarkib": "Undirilgan bug'doy maysasi, un, paxta yog'i",
+      "shop_category": "qandolat",
+      "fixedGuestMax": 4
+    },
+    {
+      "id": "halim",
+      "nomi": "Bayramona halim",
+      "kategoriya": "mavsumiy",
+      "rasm": "./images/foods/halim.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 350,
+      "narx_porsiya": 32000,
+      "tadbirlar": [
+        "Navro'z"
+      ],
+      "allergenlar": [
+        "glyuten"
+      ],
+      "tarkib": "Bug'doy donalari, barra go'sht, zira, yog'",
+      "shop_category": "oshxona"
+    },
+    {
+      "id": "kok-somsa-navroz",
+      "nomi": "Navro'z ko'k somsasi",
+      "kategoriya": "mavsumiy",
+      "rasm": "./images/foods/kok-somsa-navroz.webp",
+      "birlik": "dona",
+      "porsiya_gramm": 120,
+      "narx_porsiya": 8000,
+      "tadbirlar": [
+        "Navro'z"
+      ],
+      "allergenlar": [
+        "glyuten"
+      ],
+      "tarkib": "Yalpiz, ismaloq, otquloq, qatlama xamir",
+      "shop_category": "somsa",
+      "perPersonQty": 2
+    },
+    {
+      "id": "xurma-iftor",
+      "nomi": "Iftorlik xurmo",
+      "kategoriya": "mavsumiy",
+      "rasm": "./images/foods/xurma-iftor.webp",
+      "birlik": "quti",
+      "porsiya_gramm": 300,
+      "narx_porsiya": 24000,
+      "tadbirlar": [
+        "Iftor"
+      ],
+      "allergenlar": [],
+      "tarkib": "Saralangan shirin Madina xurmosi",
+      "shop_category": "qandolat",
+      "fixedGuestMax": 5
+    },
+    {
+      "id": "mastava-iftor",
+      "nomi": "Iftorlik issiq mastava",
+      "kategoriya": "mavsumiy",
+      "rasm": "./images/foods/mastava-iftor.webp",
+      "birlik": "porsiya",
+      "porsiya_gramm": 400,
+      "narx_porsiya": 30000,
+      "tadbirlar": [
+        "Iftor"
+      ],
+      "allergenlar": [
+        "sut"
+      ],
+      "tarkib": "Guruch, go'sht, sabzi, qatiq, ko'kat",
+      "shop_category": "oshxona"
+    },
+    {
+      "id": "patir-iftor",
+      "nomi": "Iftorlik mayin patir",
+      "kategoriya": "mavsumiy",
+      "rasm": "./images/foods/patir-iftor.webp",
+      "birlik": "dona",
+      "porsiya_gramm": 350,
+      "narx_porsiya": 9000,
+      "tadbirlar": [
+        "Iftor"
+      ],
+      "allergenlar": [
+        "glyuten",
+        "sut"
+      ],
+      "tarkib": "Sut, saryog', sedana, kunjut",
+      "shop_category": "nonvoyxona",
+      "fixedGuestMax": 4
+    }
+  ]
+}

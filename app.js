@@ -4,27 +4,24 @@
  */
 
 // ============================================================================
-// SOZLAMALAR (CONFIG) — BU YERDA FOIZLAR VA ME'YORLARNI O'ZGARTIRISHINGIZ MUMKIN
+// SOZLAMALAR (CONFIG) — FOIZLAR VA ME'YORLAR
 // ============================================================================
 const CONFIG = {
   // Tadbir turlari bo'yicha byudjet taqsimoti (foizlarda). Jami 100% bo'lishi lozim.
   budgetSplits: {
-    "Tug'ilgan kun (katta odamlar)": { food: 50, cake: 30, drinks: 20, cakeType: "cake" },
-    "Oilaviy ziyofat": { food: 50, cake: 30, drinks: 20, cakeType: "cake" },
-    "Tug'ilgan kun (bolalar)": { food: 35, cake: 40, drinks: 25, cakeType: "cake" },
-    // BETA: Iftor, Navro'z va Boshqa turlarda tort o'rniga "Shirinliklar" toifasi ishlatiladi.
-    // Ma'lumotlar bazasida (shops.json) shirinliklar bo'limi moslashtirilgan.
-    "Iftor": { food: 55, cake: 25, drinks: 20, cakeType: "sweets" },
-    "Navro'z": { food: 55, cake: 25, drinks: 20, cakeType: "sweets" },
-    "Boshqa": { food: 50, cake: 25, drinks: 25, cakeType: "sweets" }
+    "Tug'ilgan kun (katta odamlar)": { food: 50, sweets: 30, drinks: 20, hasCake: true },
+    "Tug'ilgan kun (bolalar)": { food: 40, sweets: 35, drinks: 25, hasCake: true },
+    "Oilaviy ziyofat": { food: 55, sweets: 25, drinks: 20, hasCake: false },
+    "Iftor": { food: 55, sweets: 25, drinks: 20, hasCake: false },
+    "Navro'z": { food: 55, sweets: 25, drinks: 20, hasCake: false },
+    "Boshqa": { food: 50, sweets: 25, drinks: 25, hasCake: false }
   },
 
   // 1 nafar mehmon uchun me'yorlar
   perGuest: {
-    cakeGrams: 150,     // Tort: kishi boshiga 150 gramm
-    drinkLiters: 0.4,   // Ichimlik: kishi boshiga 0.4 litr
+    drinkLiters: 0.5,   // Ichimlik: kishi boshiga 0.5 litr (gazli + sharbat + suv aralashmasi)
     fruitGrams: 200,    // Meva: kishi boshiga 200 gramm
-    somsaCount: 2,      // Somsa: kishi boshiga 2 dona
+    cakeGrams: 150,     // Tort: kishi boshiga 150 gramm (faqat tug'ilgan kunlarda)
     sweetsGrams: 100    // Sharq shirinliklari: kishi boshiga 100 gramm
   },
 
@@ -60,29 +57,37 @@ const UZ_WEEKDAYS = [
 // DASTUR HOLATI (STATE)
 // ============================================================================
 const state = {
+  foodsData: null,
+  drinksData: null,
   shopsData: null,
   currentPlan: null,
   initialPlan: null,
   undoStack: [],
   activePersonContext: null, // Agar Tab 2 dan reja tuzishga o'tilsa
-  deferredPrompt: null
+  deferredPrompt: null,
+  isDebouncing: false
 };
+
+// Xotiradagi xavfsiz zaxira saqlagich (LocalStorage ishlamasa)
+const memoryStore = {};
 
 // ============================================================================
 // YORDAMCHI FUNKSIYALAR (HELPERS)
 // ============================================================================
 
 /**
- * Xavfsiz LocalStorage o'qish
+ * Xavfsiz LocalStorage o'qish (try/catch + fallback xotira)
  */
 function storageGet(key, fallback = null) {
   try {
-    const val = localStorage.getItem(key);
-    return val ? JSON.parse(val) : fallback;
+    if (typeof localStorage !== "undefined") {
+      const val = localStorage.getItem(key);
+      if (val !== null) return JSON.parse(val);
+    }
   } catch (e) {
     console.warn("LocalStorage o'qishda xatolik:", e);
-    return fallback;
   }
+  return memoryStore[key] !== undefined ? memoryStore[key] : fallback;
 }
 
 /**
@@ -90,12 +95,15 @@ function storageGet(key, fallback = null) {
  */
 function storageSet(key, value) {
   try {
-    localStorage.setItem(key, JSON.stringify(value));
-    return true;
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem(key, JSON.stringify(value));
+      return true;
+    }
   } catch (e) {
     console.warn("LocalStorage yozishda xatolik:", e);
-    return false;
   }
+  memoryStore[key] = value;
+  return true;
 }
 
 /**
@@ -163,7 +171,7 @@ function getCountdownText(days) {
  */
 function getShopOpeningStatus(hoursStr) {
   if (!hoursStr || typeof hoursStr !== "string") {
-    return null; // Ma'lumot bo'lmasa taxmin qilinmaydi
+    return null;
   }
 
   const match = hoursStr.trim().match(/^(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})$/);
@@ -216,23 +224,136 @@ function showToast(message, duration = 3000) {
   }, duration);
 }
 
+/**
+ * Toifa uchun mos emoji belgisini olish (Rasm yuklanmasa fallback uchun)
+ */
+function getCategoryEmoji(category) {
+  const map = {
+    palov: '🍚',
+    shorva: '🍲',
+    ikkinchi: '🥘',
+    kabob: '🍢',
+    xamiri: '🥟',
+    xamir: '🥟',
+    salat: '🥗',
+    shirinlik: '🍬',
+    tort: '🎂',
+    meva: '🍇',
+    mavsumiy: '🌱',
+    gazli: '🥤',
+    sharbat: '🧃',
+    suv: '💧',
+    energetik: '⚡',
+    choy: '🧋',
+    sut: '🥛',
+    kompot: '🍷',
+    'choy-qahva': '☕',
+    food: '🍲',
+    cake: '🍬',
+    drinks: '🥤'
+  };
+  return map[category] || '🍽️';
+}
+
 // ============================================================================
-// SHOPS MA'LUMOTLARINI YUKLASH
+// MA'LUMOTLAR BAZASINI YUKLASH (FOODS, DRINKS, SHOPS)
 // ============================================================================
-async function loadShopsData() {
+async function loadAllDatasets() {
   try {
-    const response = await fetch("./data/shops.json");
-    if (!response.ok) {
-      throw new Error(`Tarmoq xatosi: ${response.status}`);
+    // 1. Foods ma'lumotlari
+    if (typeof window !== "undefined" && window.STOLYOR_FOODS_DATA && window.STOLYOR_FOODS_DATA.foods) {
+      state.foodsData = window.STOLYOR_FOODS_DATA;
     }
-    const data = await response.json();
-    state.shopsData = data;
-    return data;
-  } catch (error) {
-    console.error("Shops ma'lumotlarini yuklashda xatolik:", error);
-    showToast("Do'konlar ma'lumotlarini yuklab bo'lmadi. Sahifani qayta yuklang.");
-    return null;
+    if (!state.foodsData && typeof window !== "undefined" && window.location.protocol.startsWith("http")) {
+      try {
+        const res = await fetch("./data/foods.json");
+        if (res.ok) state.foodsData = await res.json();
+      } catch (e) {
+        console.warn("foods.json yuklashda ogohlantirish:", e);
+      }
+    }
+
+    // 2. Drinks ma'lumotlari
+    if (typeof window !== "undefined" && window.STOLYOR_DRINKS_DATA && window.STOLYOR_DRINKS_DATA.drinks) {
+      state.drinksData = window.STOLYOR_DRINKS_DATA;
+    }
+    if (!state.drinksData && typeof window !== "undefined" && window.location.protocol.startsWith("http")) {
+      try {
+        const res = await fetch("./data/drinks.json");
+        if (res.ok) state.drinksData = await res.json();
+      } catch (e) {
+        console.warn("drinks.json yuklashda ogohlantirish:", e);
+      }
+    }
+
+    // 3. Shops ma'lumotlari
+    if (typeof window !== "undefined" && window.STOLYOR_SHOPS_DATA && window.STOLYOR_SHOPS_DATA.shops) {
+      state.shopsData = window.STOLYOR_SHOPS_DATA;
+    }
+    if (!state.shopsData && typeof window !== "undefined" && window.location.protocol.startsWith("http")) {
+      try {
+        const res = await fetch("./data/shops.json");
+        if (res.ok) state.shopsData = await res.json();
+      } catch (e) {
+        console.warn("shops.json yuklashda ogohlantirish:", e);
+      }
+    }
+  } catch (err) {
+    console.error("Ma'lumotlar bazasini yuklashda xatolik:", err);
   }
+
+  return {
+    foods: state.foodsData,
+    drinks: state.drinksData,
+    shops: state.shopsData
+  };
+}
+
+/**
+ * Mahsulot uchun eng mos do'konni topish (tanlangan tuman va toifa bo'yicha)
+ */
+function getBestShopForItem(item, district) {
+  const shops = (state.shopsData && state.shopsData.shops) ? state.shopsData.shops : [];
+  if (shops.length === 0) {
+    return {
+      id: "shop-default",
+      name: "Toshkent savdo markazi",
+      category: "supermarket",
+      districts: [district],
+      telegram: "https://t.me/stolyor_aloqa_bot",
+      phone: "+998712000000",
+      partner: true,
+      hours: "08:00-22:00"
+    };
+  }
+
+  let targetCats = ['taomxona'];
+  const kat = item.kategoriya || '';
+  if (item.type === 'drink' || ['gazli', 'sharbat', 'suv', 'energetik', 'choy', 'sut', 'kompot', 'qahva', 'choy-qahva'].includes(kat)) {
+    targetCats = ['supermarket'];
+  } else if (kat === 'shirinlik' || (item.id && item.id.includes('tort'))) {
+    targetCats = ['qandolat'];
+  } else if (kat === 'meva') {
+    targetCats = ['mevafurush', 'supermarket'];
+  } else if (kat === 'xamiri' || kat === 'xamir' || (item.id && item.id.includes('somsa'))) {
+    targetCats = ['somsa', 'taomxona'];
+  } else if (kat === 'kabob') {
+    targetCats = ['taomxona'];
+  }
+
+  let candidates = shops.filter(s => targetCats.includes(s.category));
+  if (candidates.length === 0) candidates = shops;
+
+  const districtMatches = candidates.filter(s => Array.isArray(s.districts) && s.districts.includes(district));
+  if (districtMatches.length > 0) {
+    const partner = districtMatches.find(s => s.partner);
+    return partner || districtMatches[0];
+  }
+
+  const fallbackMatches = shops.filter(s => Array.isArray(s.districts) && s.districts.includes(district));
+  if (fallbackMatches.length > 0) return fallbackMatches[0];
+
+  return candidates[0] || shops[0];
 }
 
 // ============================================================================
@@ -246,89 +367,95 @@ function calculateItemQuantityAndCost(item, guestCount) {
   const gCount = Math.max(2, Math.min(50, guestCount));
   let quantity = 1;
   let quantityText = "";
-  let subtotal = item.price;
+  let subtotal = item.narx_porsiya || item.narx || item.price || 0;
+  const price = subtotal;
 
-  if (item.category === "tort") {
-    if (item.unit === "kg") {
-      // 150g per guest, minimum 1 kg, yaxlitlash 0.5 kg qadamda
+  const kat = item.kategoriya || '';
+  const birlik = item.birlik || item.unit || '';
+
+  if (birlik === "porsiya" || ['shorva', 'palov', 'ikkinchi', 'salat'].includes(kat)) {
+    if (item.homeCooked) {
+      const pots = Math.max(1, Math.ceil(gCount / 8));
+      quantity = pots;
+      quantityText = `${pots} qozon (~${gCount} kishilik)`;
+      subtotal = (item.ingredientCost || price) * pots;
+    } else {
+      quantity = gCount;
+      quantityText = `${gCount} porsiya`;
+      subtotal = price * gCount;
+    }
+  } else if (birlik === "six" || kat === "kabob") {
+    // Shashlik: kishi boshiga 2 six
+    const skewers = gCount * 2;
+    quantity = skewers;
+    quantityText = `${skewers} six (${gCount} kishi × 2 six)`;
+    subtotal = price * skewers;
+  } else if (birlik === "dona") {
+    if (item.perPersonQty) {
+      const pieces = gCount * item.perPersonQty;
+      quantity = pieces;
+      quantityText = `${pieces} dona (${gCount} kishi × ${item.perPersonQty} ta)`;
+      subtotal = price * pieces;
+    } else if (item.id && (item.id.includes("non") || item.id.includes("patir") || item.id.includes("kulcha") || item.id.includes("lochira"))) {
+      // Non: har 2 kishiga 1 dona
+      const loaves = Math.max(1, Math.ceil(gCount / 2));
+      quantity = loaves;
+      quantityText = `${loaves} dona (${gCount} kishi uchun)`;
+      subtotal = price * loaves;
+    } else if (item.fixedGuestMax) {
+      const cakesCount = Math.max(1, Math.ceil(gCount / item.fixedGuestMax));
+      quantity = cakesCount;
+      quantityText = `${cakesCount} dona`;
+      subtotal = price * cakesCount;
+    } else {
+      quantity = gCount;
+      quantityText = `${gCount} dona`;
+      subtotal = price * gCount;
+    }
+  } else if (birlik === "kg") {
+    if (item.id && item.id.includes("tort")) {
+      // Tort: 150g/kishi, minimum 1 kg, yaxlitlash 0.5 kg qadamda
       const rawKg = (gCount * CONFIG.perGuest.cakeGrams) / 1000;
       const cakeKg = Math.max(1, Math.ceil(rawKg * 2) / 2);
       quantity = cakeKg;
       quantityText = `${cakeKg} kg (${gCount} kishi uchun)`;
-      subtotal = Math.round(item.price * cakeKg);
+      subtotal = Math.round(price * cakeKg);
+    } else if (kat === "meva") {
+      // Meva: 200g/kishi
+      const rawKg = (gCount * CONFIG.perGuest.fruitGrams) / 1000;
+      const fruitKg = Math.max(1, Math.ceil(rawKg * 2) / 2);
+      quantity = fruitKg;
+      quantityText = `${fruitKg} kg`;
+      subtotal = Math.round(price * fruitKg);
     } else {
-      // Dona yoki bento
-      const cakesCount = Math.max(1, Math.ceil(gCount / (item.fixedGuestMax || 4)));
-      quantity = cakesCount;
-      quantityText = `${cakesCount} dona`;
-      subtotal = item.price * cakesCount;
-    }
-  } else if (item.category === "taom") {
-    if (item.unit === "dona" && item.perPersonQty) {
-      // Somsa va shu kabilar (kishi boshiga N dona)
-      const totalPieces = gCount * item.perPersonQty;
-      quantity = totalPieces;
-      quantityText = `${totalPieces} dona (${gCount} kishi × ${item.perPersonQty} ta)`;
-      subtotal = item.price * totalPieces;
-    } else if (item.unit === "porsiya") {
-      quantity = gCount;
-      quantityText = `${gCount} porsiya`;
-      subtotal = item.price * gCount;
-    } else if (item.homeCooked) {
-      // Uyda tayyorlash (masalan 8 kishilik qozon)
-      const pots = Math.max(1, Math.ceil(gCount / 8));
-      quantity = pots;
-      quantityText = `${pots} qozon (~${gCount} kishilik)`;
-      subtotal = (item.ingredientCost || item.price) * pots;
-    } else if (item.fixedGuestMax) {
-      const units = Math.max(1, Math.ceil(gCount / item.fixedGuestMax));
-      quantity = units;
-      quantityText = `${units} dona`;
-      subtotal = item.price * units;
-    } else {
-      quantity = gCount;
-      quantityText = `${gCount} ta`;
-      subtotal = item.price * gCount;
-    }
-  } else if (item.category === "meva") {
-    // 200g meva kishi boshiga
-    const rawKg = (gCount * CONFIG.perGuest.fruitGrams) / 1000;
-    const fruitKg = Math.max(1, Math.ceil(rawKg * 2) / 2);
-    quantity = fruitKg;
-    quantityText = `${fruitKg} kg`;
-    subtotal = Math.round(item.price * fruitKg);
-  } else if (item.category === "ichimlik") {
-    // 0.4 - 0.5 litr kishi boshiga
-    const totalLiters = gCount * CONFIG.perGuest.drinkLiters;
-    if (item.unit.includes("2L") || item.name.includes("2L")) {
-      const bottles = Math.max(1, Math.ceil(totalLiters / 2));
-      quantity = bottles;
-      quantityText = `${bottles} dona (2L)`;
-      subtotal = item.price * bottles;
-    } else if (item.unit.includes("1.5L") || item.name.includes("1.5L")) {
-      const bottles = Math.max(1, Math.ceil(totalLiters / 1.5));
-      quantity = bottles;
-      quantityText = `${bottles} dona (1.5L)`;
-      subtotal = item.price * bottles;
-    } else {
-      const liters = Math.max(1, Math.ceil(totalLiters));
-      quantity = liters;
-      quantityText = `${liters} litr`;
-      subtotal = item.price * liters;
-    }
-  } else if (item.category === "shirinlik") {
-    if (item.unit === "kg") {
+      // Sharq shirinliklari: 80-100g/kishi
       const rawKg = (gCount * CONFIG.perGuest.sweetsGrams) / 1000;
-      const kg = Math.max(1, Math.ceil(rawKg * 2) / 2);
-      quantity = kg;
-      quantityText = `${kg} kg`;
-      subtotal = Math.round(item.price * kg);
-    } else {
-      const packs = Math.max(1, Math.ceil(gCount / 6));
-      quantity = packs;
-      quantityText = `${packs} to'plam/quti`;
-      subtotal = item.price * packs;
+      const sweetsKg = Math.max(0.5, Math.ceil(rawKg * 2) / 2);
+      quantity = sweetsKg;
+      quantityText = `${sweetsKg} kg`;
+      subtotal = Math.round(price * sweetsKg);
     }
+  } else if (birlik === "to'plam") {
+    const packs = Math.max(1, Math.ceil(gCount / 6));
+    quantity = packs;
+    quantityText = `${packs} to'plam`;
+    subtotal = price * packs;
+  } else if (item.hajm || item.type === "drink" || ['gazli', 'sharbat', 'suv', 'energetik', 'choy', 'sut', 'kompot', 'choy-qahva'].includes(kat)) {
+    // Ichimliklar: hajmiga qarab baklar sonini hisoblash
+    const hajm = item.hajm || "1.5 l";
+    let bottles = 1;
+    if (hajm.includes("1.5")) {
+      bottles = Math.max(1, Math.round(gCount / 4));
+    } else if (hajm.includes("1") && !hajm.includes("1.5")) {
+      bottles = Math.max(1, Math.round(gCount / 5));
+    } else if (hajm.includes("0.5") || hajm.includes("0.25")) {
+      bottles = Math.max(1, Math.ceil(gCount / 2));
+    } else {
+      bottles = Math.max(1, Math.round(gCount / 4));
+    }
+    quantity = bottles;
+    quantityText = `${bottles} dona (${hajm})`;
+    subtotal = price * bottles;
   }
 
   return {
@@ -339,55 +466,11 @@ function calculateItemQuantityAndCost(item, guestCount) {
 }
 
 /**
- * Do'konlar ro'yxatidan tuman va parametrlarga mos variantlarni saralab olish
+ * Tasodifiy element tanlagich (Qayta tuzish xilma-xilligi uchun)
  */
-function getAllCandidateItems(categoryFilter, selectedDistrict, isKidEvent = false) {
-  if (!state.shopsData || !state.shopsData.shops) return [];
-
-  const candidates = [];
-  state.shopsData.shops.forEach((shop) => {
-    const isDistrictMatch = Array.isArray(shop.districts) && shop.districts.includes(selectedDistrict);
-    shop.items.forEach((item) => {
-      let matchesCategory = false;
-      if (Array.isArray(categoryFilter)) {
-        matchesCategory = categoryFilter.includes(item.category);
-      } else {
-        matchesCategory = item.category === categoryFilter;
-      }
-
-      if (matchesCategory) {
-        // Tuman prioriteti: tanlangan tumandagi do'konlar 0, boshqalar 1
-        let priority = isDistrictMatch ? 0 : 1;
-        // Bolalar tadbiri bo'lsa kidFriendly mahsulotlar oldinga suriladi
-        if (isKidEvent && item.kidFriendly) {
-          priority -= 0.5;
-        }
-
-        candidates.push({
-          item: { ...item },
-          shop: {
-            id: shop.id,
-            name: shop.name,
-            category: shop.category,
-            districts: shop.districts,
-            telegram: shop.telegram,
-            phone: shop.phone,
-            partner: shop.partner,
-            hours: shop.hours
-          },
-          priority
-        });
-      }
-    });
-  });
-
-  // Prioritet va narx bo'yicha saralash
-  candidates.sort((a, b) => {
-    if (a.priority !== b.priority) return a.priority - b.priority;
-    return a.item.price - b.item.price;
-  });
-
-  return candidates;
+function pickRandomItem(list) {
+  if (!Array.isArray(list) || list.length === 0) return null;
+  return list[Math.floor(Math.random() * list.length)];
 }
 
 /**
@@ -396,120 +479,213 @@ function getAllCandidateItems(categoryFilter, selectedDistrict, isKidEvent = fal
 function generateTablePlan(params) {
   const { eventDate, eventType, budget, guests, district, customEventName } = params;
 
-  // Byudjet foizlari sozlamalarini olish
-  const splitRule = CONFIG.budgetSplits[eventType] || CONFIG.budgetSplits["Boshqa"];
+  const foods = (state.foodsData && state.foodsData.foods) ? state.foodsData.foods : [];
+  const drinks = (state.drinksData && state.drinksData.drinks) ? state.drinksData.drinks : [];
+
+  // 1. Tort qoidasi: Faqat Tug'ilgan kun yoki Yubiley tadbirlarida tort qo'shiladi!
+  const isBirthday = eventType.includes("Tug'ilgan kun") || 
+    (customEventName && customEventName.toLowerCase().includes("yubiley"));
+  const hasCake = !!isBirthday;
   const isKidEvent = eventType === "Tug'ilgan kun (bolalar)";
-  const isSweetsEvent = splitRule.cakeType === "sweets";
-
-  const targetFoodBudget = (budget * splitRule.food) / 100;
-  const targetCakeBudget = (budget * splitRule.cake) / 100;
-  const targetDrinksBudget = (budget * splitRule.drinks) / 100;
-
-  // Nomzod mahsulotlarni topish
-  const foodCandidates = getAllCandidateItems("taom", district, isKidEvent);
-  const cakeCandidates = isSweetsEvent
-    ? getAllCandidateItems("shirinlik", district, isKidEvent)
-    : getAllCandidateItems("tort", district, isKidEvent);
-  const drinkCandidates = getAllCandidateItems("ichimlik", district, isKidEvent);
-  const fruitCandidates = getAllCandidateItems("meva", district, isKidEvent);
 
   const selectedItems = [];
 
-  // 1. Taom tanlash (1 ta asosiy issiq taom yoki somsa)
-  let chosenFood = null;
-  // Byudjetga mos keladigan eng yaqin yaxshi variant
-  for (const cand of foodCandidates) {
-    const calc = calculateItemQuantityAndCost(cand.item, guests);
-    if (!chosenFood || calc.subtotal <= targetFoodBudget * 1.1) {
-      chosenFood = { ...cand, calc };
-      if (calc.subtotal <= targetFoodBudget) break;
+  function addPlanItem(rawItem, planCategory) {
+    if (!rawItem) return;
+    const calc = calculateItemQuantityAndCost(rawItem, guests);
+    const shop = getBestShopForItem(rawItem, district);
+    selectedItems.push({
+      instanceId: "item-" + Math.random().toString(36).substr(2, 9),
+      item: { ...rawItem, name: rawItem.nomi || rawItem.name },
+      shop,
+      calc,
+      planCategory,
+      locked: false
+    });
+  }
+
+  // 2. TAOMLAR BO'LIMI (FOOD) — Tadbir turiga mos
+  if (eventType === "Navro'z") {
+    // Navro'z: Sumalak yoki Halim + Ko'k somsa / Bayram oshi + Patir non
+    const springSpecial = pickRandomItem(foods.filter(f => ['sumalak', 'halim'].includes(f.id))) || foods.find(f => f.id === 'sumalak');
+    addPlanItem(springSpecial, "food");
+
+    const pastry = pickRandomItem(foods.filter(f => ['kok-somsa-navroz', 'somsa-kok', 'palov-bayram'].includes(f.id)));
+    addPlanItem(pastry, "food");
+
+    const bread = foods.find(f => f.id === 'patir') || foods.find(f => f.id === 'patir-iftor');
+    addPlanItem(bread, "food");
+  } else if (eventType === "Iftor") {
+    // Iftor: Mastava yoki to'yimli sho'rva + Somsa yoki Manti + Patir non
+    const soup = pickRandomItem(foods.filter(f => ['mastava-iftor', 'mastava', 'shorva', 'chuchvara-shorva'].includes(f.id)));
+    addPlanItem(soup, "food");
+
+    const pastry = pickRandomItem(foods.filter(f => ['somsa-tandir', 'manti', 'xonim'].includes(f.id)));
+    addPlanItem(pastry, "food");
+
+    const bread = foods.find(f => f.id === 'patir-iftor') || foods.find(f => f.id === 'patir');
+    addPlanItem(bread, "food");
+  } else if (isKidEvent) {
+    // Bolalar tadbiri: Bolalarbop taomlar (manti, tovuq shashlik, qovurilgan chuchvara, kartoshkali somsa)
+    const main = pickRandomItem(foods.filter(f => ['shashlik-tovuq', 'manti', 'chuchvara-qovurilgan', 'somsa-kartoshkali'].includes(f.id)));
+    addPlanItem(main, "food");
+
+    const side = pickRandomItem(foods.filter(f => ['somsa-qovoqli', 'gumma', 'chebureki', 'kulcha'].includes(f.id)));
+    addPlanItem(side, "food");
+  } else if (eventType.includes("katta")) {
+    // Tug'ilgan kun (katta odamlar): Palov + Shashlik + Salat + Non
+    const palovCandidates = foods.filter(f => f.kategoriya === 'palov');
+    const main = pickRandomItem(palovCandidates) || foods.find(f => f.id === 'palov-toshkent');
+    addPlanItem(main, "food");
+
+    const kabobCandidates = foods.filter(f => f.kategoriya === 'kabob');
+    const kabob = pickRandomItem(kabobCandidates);
+    addPlanItem(kabob, "food");
+
+    const salad = pickRandomItem(foods.filter(f => ['achichuk', 'bodring-pomidor', 'toshkent-salati'].includes(f.id)));
+    addPlanItem(salad, "food");
+
+    const bread = foods.find(f => f.id === 'obi-non');
+    addPlanItem(bread, "food");
+  } else {
+    // Oilaviy ziyofat va Boshqa: Palov yoki Ikkinchi taom + Somsa + Salat + Non
+    const mainCandidates = foods.filter(f => f.kategoriya === 'palov' || ['qozon-kabob', 'dimlama', 'beshbarmoq-norin'].includes(f.id));
+    const main = pickRandomItem(mainCandidates) || foods.find(f => f.id === 'palov-samarqand');
+    addPlanItem(main, "food");
+
+    const somsa = pickRandomItem(foods.filter(f => ['somsa-tandir', 'somsa-qatlama', 'manti'].includes(f.id)));
+    addPlanItem(somsa, "food");
+
+    const salad = pickRandomItem(foods.filter(f => ['achichuk', 'bodring-pomidor', 'kok-salat'].includes(f.id)));
+    addPlanItem(salad, "food");
+
+    const bread = foods.find(f => f.id === 'patir') || foods.find(f => f.id === 'obi-non');
+    addPlanItem(bread, "food");
+  }
+
+  // 3. SHIRINLIKLAR BO'LIMI (SWEETS / CAKE)
+  if (hasCake) {
+    // Tort faqat tug'ilgan kunlarda
+    const cakeList = foods.filter(f => f.id.includes('tort') || f.id === 'bayram-torti');
+    const chosenCake = pickRandomItem(cakeList) || foods.find(f => f.id === 'bayram-torti');
+    addPlanItem(chosenCake, "cake");
+
+    // Bolalar bo'lsa qo'shimcha mayda shirinlik
+    if (isKidEvent) {
+      const sweet = pickRandomItem(foods.filter(f => ['vafli', 'eklerlar', 'pirojniy'].includes(f.id)));
+      if (sweet) addPlanItem(sweet, "cake");
     }
-  }
-  if (!chosenFood && foodCandidates.length > 0) {
-    chosenFood = { ...foodCandidates[0], calc: calculateItemQuantityAndCost(foodCandidates[0].item, guests) };
-  }
-  if (chosenFood) {
-    selectedItems.push(createPlanItem(chosenFood, "food"));
+  } else if (eventType === "Iftor") {
+    // Iftorlikda Madina xurmosi albatta qo'shiladi!
+    const xurmo = foods.find(f => f.id === 'xurma-iftor') || foods.find(f => f.id === 'nishalda');
+    addPlanItem(xurmo, "cake");
+
+    const sweet = pickRandomItem(foods.filter(f => ['halva', 'navvot', 'nishalda'].includes(f.id)));
+    addPlanItem(sweet, "cake");
+  } else {
+    // Milliy bayramona shirinliklar (tort emas!)
+    const sweet1 = pickRandomItem(foods.filter(f => ['chak-chak', 'halva', 'baklava', 'navvot', 'parvarda', 'pashmak'].includes(f.id)));
+    addPlanItem(sweet1, "cake");
+
+    const driedFruit = pickRandomItem(foods.filter(f => ['mayiz', 'kishmish', 'yongoq', 'bodom', 'quritilgan-orik'].includes(f.id)));
+    addPlanItem(driedFruit, "cake");
   }
 
-  // 2. Tort yoki Shirinlik tanlash
-  // Qoida: Tort o'lchami mehmonlar sonidan kelib chiqadi (150g/kishi). Tort byudjetiga sig'adigan eng arzon tort tanlanadi.
-  let chosenCake = null;
-  // Avval tort byudjetiga sig'adigan eng mos yoki eng arzon variantni qidiramiz
-  const fittingCakes = [];
-  for (const cand of cakeCandidates) {
-    const calc = calculateItemQuantityAndCost(cand.item, guests);
-    fittingCakes.push({ ...cand, calc });
+  // 4. ICHIMLIK VA MEVALAR BO'LIMI (DRINKS & FRUIT)
+  if (eventType === "Iftor") {
+    // Iftorlik ichimliklari: Ayron + Toza suv + Ko'k choy
+    const ayron = drinks.find(d => d.id === 'ayron-1') || drinks[0];
+    addPlanItem(ayron, "drinks");
+
+    const water = drinks.find(d => d.id === 'suv-gazsiz-nestle-15') || drinks.find(d => d.kategoriya === 'suv');
+    addPlanItem(water, "drinks");
+
+    const tea = drinks.find(d => d.id === 'kok-choy-95');
+    addPlanItem(tea, "drinks");
+  } else {
+    // Standart ichimlik triosi (0.5 l/mehmon): 1.5 l Coca-Cola/Pepsi + Sharbat + Suv
+    const sodaCandidates = isKidEvent 
+      ? drinks.filter(d => ['fanta-15', 'coca-cola-15', 'sprite-15'].includes(d.id))
+      : drinks.filter(d => ['coca-cola-15', 'pepsi-15', 'dinay-15'].includes(d.id));
+    const soda = pickRandomItem(sodaCandidates) || drinks[0];
+    addPlanItem(soda, "drinks");
+
+    const juiceCandidates = drinks.filter(d => d.kategoriya === 'sharbat');
+    const juice = pickRandomItem(juiceCandidates);
+    addPlanItem(juice, "drinks");
+
+    const waterCandidates = drinks.filter(d => d.kategoriya === 'suv');
+    const water = pickRandomItem(waterCandidates);
+    addPlanItem(water, "drinks");
   }
 
-  // Eng arzon variantlar ichidan byudjetga sig'adiganini tanlash
-  fittingCakes.sort((a, b) => a.calc.subtotal - b.calc.subtotal);
-  chosenCake = fittingCakes.find(c => c.calc.subtotal <= targetCakeBudget) || fittingCakes[0];
+  // Sarxil meva
+  const fruitCandidates = foods.filter(f => f.kategoriya === 'meva');
+  const fruit = pickRandomItem(fruitCandidates);
+  addPlanItem(fruit, "drinks");
 
-  if (chosenCake) {
-    selectedItems.push(createPlanItem(chosenCake, "cake"));
-  }
+  // 5. BYUDJET NAZORATI: Generatsiya paytida umumiy summa byudjetdan oshmasligi shart!
+  let currentTotal = selectedItems.reduce((s, it) => s + it.calc.subtotal, 0);
 
-  // 3. Ichimlik tanlash
-  let chosenDrink = null;
-  const drinksTargetHalf = targetDrinksBudget * 0.5;
-  for (const cand of drinkCandidates) {
-    const calc = calculateItemQuantityAndCost(cand.item, guests);
-    if (!chosenDrink || calc.subtotal <= drinksTargetHalf * 1.1) {
-      chosenDrink = { ...cand, calc };
-      if (calc.subtotal <= drinksTargetHalf) break;
-    }
-  }
-  if (!chosenDrink && drinkCandidates.length > 0) {
-    chosenDrink = { ...drinkCandidates[0], calc: calculateItemQuantityAndCost(drinkCandidates[0].item, guests) };
-  }
-  if (chosenDrink) {
-    selectedItems.push(createPlanItem(chosenDrink, "drinks"));
-  }
-
-  // 4. Meva tanlash (Ichimlik va mevalar toifasiga kiradi)
-  let chosenFruit = null;
-  const fruitTargetHalf = targetDrinksBudget * 0.5;
-  for (const cand of fruitCandidates) {
-    const calc = calculateItemQuantityAndCost(cand.item, guests);
-    if (!chosenFruit || calc.subtotal <= fruitTargetHalf * 1.1) {
-      chosenFruit = { ...cand, calc };
-      if (calc.subtotal <= fruitTargetHalf) break;
-    }
-  }
-  if (!chosenFruit && fruitCandidates.length > 0) {
-    chosenFruit = { ...fruitCandidates[0], calc: calculateItemQuantityAndCost(fruitCandidates[0].item, guests) };
-  }
-  if (chosenFruit) {
-    selectedItems.push(createPlanItem(chosenFruit, "drinks"));
-  }
-
-  // Jami summani hisoblash
-  let currentTotal = selectedItems.reduce((sum, it) => sum + it.calc.subtotal, 0);
-
-  // Qoida: "The total must never exceed the budget at generation time."
-  // Agar boshlang'ich generatsiyada byudjetdan oshib ketsa, eng qimmat narsalarni arzonrog'iga almashtiramiz
   if (currentTotal > budget) {
-    // Har bir toifada arzonroq alternativaga tushirish
+    // 1-bosqich: Yordamchi taomlarni (salat, qo'shimcha non, ikkinchi shirinlik) olib tashlash
+    for (let i = selectedItems.length - 1; i >= 0; i--) {
+      if (currentTotal <= budget) break;
+      const it = selectedItems[i];
+      const isRemovable = it.item.kategoriya === 'salat' || 
+        (it.item.id && it.item.id.includes('non') && selectedItems.filter(x => x.item.id && x.item.id.includes('non')).length > 1) ||
+        (it.planCategory === 'cake' && !hasCake && selectedItems.filter(x => x.planCategory === 'cake').length > 1);
+
+      if (isRemovable) {
+        currentTotal -= it.calc.subtotal;
+        selectedItems.splice(i, 1);
+      }
+    }
+  }
+
+  if (currentTotal > budget) {
+    // 2-bosqich: Qimmat taomlarni arzonroq mazali alternativaga tushirish
     for (let i = 0; i < selectedItems.length; i++) {
       if (currentTotal <= budget) break;
       const it = selectedItems[i];
-      let pool = [];
-      if (it.planCategory === "food") pool = foodCandidates;
-      else if (it.planCategory === "cake") pool = cakeCandidates;
-      else if (it.item.category === "ichimlik") pool = drinkCandidates;
-      else if (it.item.category === "meva") pool = fruitCandidates;
+      if (it.planCategory === 'food') {
+        const cheaperFoods = foods
+          .filter(f => (f.kategoriya === it.item.kategoriya || f.homeCooked) && (!f.tadbirlar || f.tadbirlar.length === 0 || f.tadbirlar.includes(eventType) || f.tadbirlar.includes("Boshqa") || f.tadbirlar.includes("Oilaviy ziyofat")))
+          .map(f => ({ f, calc: calculateItemQuantityAndCost(f, guests) }))
+          .filter(x => x.calc.subtotal < it.calc.subtotal)
+          .sort((a, b) => a.calc.subtotal - b.calc.subtotal);
 
-      const cheaper = pool
-        .map(c => ({ ...c, calc: calculateItemQuantityAndCost(c.item, guests) }))
-        .filter(c => c.calc.subtotal < it.calc.subtotal)
-        .sort((a, b) => a.calc.subtotal - b.calc.subtotal);
-
-      if (cheaper.length > 0) {
-        currentTotal -= it.calc.subtotal;
-        selectedItems[i] = createPlanItem(cheaper[0], it.planCategory);
-        currentTotal += selectedItems[i].calc.subtotal;
+        if (cheaperFoods.length > 0) {
+          currentTotal -= it.calc.subtotal;
+          it.item = { ...cheaperFoods[0].f, name: cheaperFoods[0].f.nomi };
+          it.calc = cheaperFoods[0].calc;
+          it.shop = getBestShopForItem(it.item, district);
+          currentTotal += it.calc.subtotal;
+        }
       }
+    }
+  }
+
+  if (currentTotal > budget) {
+    // 3-bosqich: Agar byudjet juda kam bo'lsa, eng muhim 3 ta narsa qoldiriladi
+    const essentialFood = selectedItems.find(x => x.planCategory === 'food');
+    const essentialSweet = selectedItems.find(x => x.planCategory === 'cake');
+    const essentialDrink = selectedItems.find(x => x.planCategory === 'drinks');
+    selectedItems.length = 0;
+    if (essentialFood) selectedItems.push(essentialFood);
+    if (essentialSweet) selectedItems.push(essentialSweet);
+    if (essentialDrink) selectedItems.push(essentialDrink);
+    currentTotal = selectedItems.reduce((s, it) => s + it.calc.subtotal, 0);
+
+    // Agar hatto shu ham oshsa, tejamkor uy taomi (mastava/shavla), navvot va suv tanlanadi
+    if (currentTotal > budget) {
+      const cheapMastava = foods.find(f => f.id === 'mastava') || foods[0];
+      const cheapSweet = foods.find(f => f.id === 'navvot') || foods[1];
+      const cheapWater = drinks.find(d => d.kategoriya === 'suv') || drinks[0];
+      selectedItems.length = 0;
+      addPlanItem(cheapMastava, "food");
+      addPlanItem(cheapSweet, "cake");
+      addPlanItem(cheapWater, "drinks");
     }
   }
 
@@ -527,14 +703,14 @@ function generateTablePlan(params) {
       daysLeft
     },
     items: selectedItems,
-    isSweetsEvent
+    hasCake
   };
 
   return plan;
 }
 
 /**
- * Reja elementi obyektini yaratish
+ * Reja elementi yaratish
  */
 function createPlanItem(candidate, planCategory) {
   return {
@@ -542,7 +718,7 @@ function createPlanItem(candidate, planCategory) {
     item: candidate.item,
     shop: candidate.shop,
     calc: candidate.calc,
-    planCategory, // "food", "cake", "drinks"
+    planCategory,
     locked: false
   };
 }
@@ -573,7 +749,7 @@ function renderPlan(plan, highlightItemId = null) {
     `${eventDisplayName} · ${formattedDate} · ${p.guests} mehmon · ${p.district} tumani`;
 
   // 2. Ogohlantirishlar va maslahatlar
-  // A. Kam byudjet ogohlantirishi (mehmon boshiga 20-25 ming so'mdan kam bo'lsa)
+  // A. Kam byudjet ogohlantirishi
   const budgetPerGuest = Math.round(p.budget / p.guests);
   const lowBudgetWarningEl = document.getElementById("low-budget-warning");
   if (budgetPerGuest < CONFIG.minComfortBudgetPerGuest) {
@@ -590,18 +766,18 @@ function renderPlan(plan, highlightItemId = null) {
 
   // B. Sana bo'yicha maslahatlar
   const dateHintEl = document.getElementById("date-hint-warning");
-  const hasCake = plan.items.some(it => it.item.category === "tort");
+  const hasCakeItem = plan.items.some(it => it.item && it.item.id && it.item.id.includes("tort"));
   if (p.daysLeft <= 2 && p.daysLeft >= 0) {
-    dateHintEl.innerHTML = `⚠️ <strong>Muhim eslatma:</strong> Tadbirga 2 kundan kam vaqt qoldi. Tort va buyurtma xizmatlari band bo'lishi mumkin. Tezroq do'kon bilan bog'laning.`;
+    dateHintEl.innerHTML = `⚠️ <strong>Muhim eslatma:</strong> Tadbirga 2 kundan kam vaqt qoldi. Do'konlar va buyurtma xizmatlari band bo'lishi mumkin. Tezroq bog'laning.`;
     dateHintEl.classList.remove("hidden");
-  } else if (p.daysLeft >= 7 && hasCake) {
+  } else if (p.daysLeft >= 7 && hasCakeItem) {
     dateHintEl.innerHTML = `💡 <strong>Maslahat:</strong> Tadbirga 1 haftadan ko'p vaqt bor. Katta tortni oldindan buyurtma qilib qo'ygan ma'qul.`;
     dateHintEl.classList.remove("hidden");
   } else {
     dateHintEl.classList.add("hidden");
   }
 
-  // C. Yaqin kishi allergiyasi yoki izohi (agar Tab 2 dan ochilgan bo'lsa)
+  // C. Yaqin kishi allergiyasi yoki izohi
   const allergyNoticeEl = document.getElementById("person-allergy-notice");
   if (state.activePersonContext && (state.activePersonContext.allergy || state.activePersonContext.notes)) {
     const notesParts = [];
@@ -617,21 +793,16 @@ function renderPlan(plan, highlightItemId = null) {
     allergyNoticeEl.classList.add("hidden");
   }
 
-  // 3. Toifalar sarlavhasi (Iftor / Navro'z bo'lsa "Shirinliklar", aks holda "Tort")
+  // 3. Toifalar sarlavhasi (Tort har doim emas: faqat hasCake bo'lsa tort nishoni)
   const cakeTitleEl = document.getElementById("cat-title-cake");
   const cakeAddBtn = document.getElementById("cat-add-btn-cake");
   if (cakeTitleEl && cakeAddBtn) {
-    if (!cakeAddBtn.dataset) cakeAddBtn.dataset = {};
-    if (plan.isSweetsEvent) {
+    if (plan.hasCake) {
+      cakeTitleEl.textContent = "🎂 Shirinliklar va tort";
+      cakeAddBtn.textContent = "+ Mahsulot qo'shish";
+    } else {
       cakeTitleEl.textContent = "🍬 Shirinliklar";
       cakeAddBtn.textContent = "+ Shirinlik qo'shish";
-      cakeAddBtn.dataset.category = "shirinlik";
-      cakeAddBtn.setAttribute("data-category", "shirinlik");
-    } else {
-      cakeTitleEl.textContent = "🎂 Tort";
-      cakeAddBtn.textContent = "+ Tort qo'shish";
-      cakeAddBtn.dataset.category = "tort";
-      cakeAddBtn.setAttribute("data-category", "tort");
     }
   }
 
@@ -644,7 +815,7 @@ function renderPlan(plan, highlightItemId = null) {
   renderCategoryItems("cat-items-cake", cakeItems, plan, highlightItemId);
   renderCategoryItems("cat-items-drinks", drinkItems, plan, highlightItemId);
 
-  // Subtotallarni hisoblash
+  // Subtotallar
   const foodSubtotal = foodItems.reduce((s, it) => s + it.calc.subtotal, 0);
   const cakeSubtotal = cakeItems.reduce((s, it) => s + it.calc.subtotal, 0);
   const drinkSubtotal = drinkItems.reduce((s, it) => s + it.calc.subtotal, 0);
@@ -653,7 +824,7 @@ function renderPlan(plan, highlightItemId = null) {
   document.getElementById("cat-subtotal-cake").textContent = formatMoney(cakeSubtotal);
   document.getElementById("cat-subtotal-drinks").textContent = formatMoney(drinkSubtotal);
 
-  // 5. Jami summa va qoldiqni hisoblash
+  // 5. Jami summa va qoldiq
   const totalAmount = foodSubtotal + cakeSubtotal + drinkSubtotal;
   const balance = p.budget - totalAmount;
 
@@ -675,7 +846,6 @@ function renderPlan(plan, highlightItemId = null) {
 
     overBudgetWarningEl.innerHTML = `⚠️ <strong>Diqqat:</strong> Byudjetdan ${formatMoney(overAmount)} oshdi. Tejamkorroq variantlarni tanlash uchun "Almashtirish" tugmasini bosing ("Tejash uchun" deb belgilangan variantlarga qarang).`;
     overBudgetWarningEl.classList.remove("hidden");
-
     progressBar.classList.add("over");
   } else {
     balanceLabel.textContent = "Qoldiq mablag':";
@@ -690,7 +860,7 @@ function renderPlan(plan, highlightItemId = null) {
   const undoBtn = document.getElementById("undo-plan-btn");
   undoBtn.disabled = state.undoStack.length === 0;
 
-  // "Shu rejani saqlash" tugmasi (faqat Tab 2 dan kelganda ko'rinadi)
+  // "Shu rejani saqlash" tugmasi
   const savePersonBtn = document.getElementById("save-to-person-btn");
   if (state.activePersonContext) {
     savePersonBtn.classList.remove("hidden");
@@ -736,6 +906,19 @@ function renderCategoryItems(containerId, items, plan, highlightItemId = null) {
       ? `<span class="badge badge-home">🏠 Uyda pishiring ${item.ingredientCost ? `(taxminiy masalliq: ${formatMoney(item.ingredientCost)})` : ""}</span>` 
       : "";
 
+    // Allergen nishoni
+    const allergenHtml = (Array.isArray(item.allergenlar) && item.allergenlar.length > 0)
+      ? `<span class="item-allergen-tag">Allergen: ${item.allergenlar.join(', ')}</span>`
+      : "";
+
+    // Tarkib qisqa (4-5 masalliq)
+    const tarkibHtml = item.tarkib 
+      ? `<div class="item-ingredients" title="${item.tarkib}">${item.tarkib}</div>`
+      : "";
+
+    // Toifaga mos fallback emoji
+    const fallbackEmoji = getCategoryEmoji(item.kategoriya || it.planCategory);
+
     // Qulf holati
     const lockIcon = it.locked ? "🔒" : "🔓";
     const lockTitle = it.locked ? "Qulfni ochish (qayta tuzishda o'zgaradi)" : "Qulflash (qayta tuzishda saqlanadi)";
@@ -743,15 +926,21 @@ function renderCategoryItems(containerId, items, plan, highlightItemId = null) {
     return `
       <div class="item-row ${isUpdated ? 'item-updated' : ''}" data-id="${it.instanceId}">
         <div class="item-main-info">
+          <div class="item-img-wrap">
+            <img src="${item.rasm || './icons/icon-192.png'}" alt="${item.name}" loading="lazy" width="88" height="58" onerror="this.onerror=null; this.parentElement.classList.add('img-fallback');">
+            <span class="item-img-fallback-icon">${fallbackEmoji}</span>
+          </div>
           <div class="item-title-group">
             <h5 class="item-name">${item.name}</h5>
+            ${tarkibHtml}
             <div class="item-badges">
               ${homeCookedBadgeHtml}
+              ${allergenHtml}
             </div>
           </div>
           <div class="item-pricing">
             <div class="item-subtotal font-numeric">${formatMoney(calc.subtotal)}</div>
-            <div class="item-unit-calc font-numeric">${calc.quantityText} · ${formatMoney(item.price)}/${item.unit}</div>
+            <div class="item-unit-calc font-numeric">${calc.quantityText} · ${formatMoney(item.narx_porsiya || item.narx || item.price || 0)}/${item.birlik || item.unit || 'dona'}</div>
           </div>
         </div>
 
@@ -808,108 +997,162 @@ function openSwapModal(instanceId) {
   titleEl.textContent = `"${currentItem.item.name}" o'rniga variantlar`;
   infoEl.innerHTML = `Hozirgi tanlov: <strong>${currentItem.item.name}</strong> (${currentItem.shop.name}) — <strong>${formatMoney(currentItem.calc.subtotal)}</strong>`;
 
-  // Shu toifadagi barcha nomzodlarni olish
   const guests = plan.params.guests;
   const isKidEvent = plan.params.eventType === "Tug'ilgan kun (bolalar)";
+  const foods = (state.foodsData && state.foodsData.foods) ? state.foodsData.foods : [];
+  const drinks = (state.drinksData && state.drinksData.drinks) ? state.drinksData.drinks : [];
+
   let pool = [];
+  let filterChipsHtml = "";
 
   if (currentItem.planCategory === "food") {
-    pool = getAllCandidateItems("taom", plan.params.district, isKidEvent);
+    pool = foods.filter(f => ['palov', 'shorva', 'ikkinchi', 'kabob', 'xamiri', 'xamir', 'salat', 'mavsumiy'].includes(f.kategoriya));
+    filterChipsHtml = `
+      <div class="swap-filter-chips" id="swap-filter-chips">
+        <button type="button" class="swap-filter-chip active" data-filter="all">Barchasi</button>
+        <button type="button" class="swap-filter-chip" data-filter="palov">Palov</button>
+        <button type="button" class="swap-filter-chip" data-filter="kabob">Kabob</button>
+        <button type="button" class="swap-filter-chip" data-filter="shorva">Sho'rva</button>
+        <button type="button" class="swap-filter-chip" data-filter="ikkinchi">Ikkinchi taom</button>
+        <button type="button" class="swap-filter-chip" data-filter="xamir">Somsa & Non</button>
+        <button type="button" class="swap-filter-chip" data-filter="salat">Salat</button>
+      </div>
+    `;
   } else if (currentItem.planCategory === "cake") {
-    pool = plan.isSweetsEvent 
-      ? getAllCandidateItems("shirinlik", plan.params.district, isKidEvent)
-      : getAllCandidateItems("tort", plan.params.district, isKidEvent);
-  } else if (currentItem.planCategory === "drinks") {
-    // Agar tanlangan narsa meva bo'lsa mevalarni, aks holda ichimliklarni taklif qilamiz
-    if (currentItem.item.category === "meva") {
-      pool = getAllCandidateItems("meva", plan.params.district, isKidEvent);
+    if (plan.hasCake) {
+      pool = foods.filter(f => f.kategoriya === 'shirinlik' || (f.id && f.id.includes('tort')));
+      filterChipsHtml = `
+        <div class="swap-filter-chips" id="swap-filter-chips">
+          <button type="button" class="swap-filter-chip active" data-filter="all">Barchasi</button>
+          <button type="button" class="swap-filter-chip" data-filter="tort">Tortlar</button>
+          <button type="button" class="swap-filter-chip" data-filter="shirinlik">Milliy shirinliklar</button>
+        </div>
+      `;
     } else {
-      pool = getAllCandidateItems("ichimlik", plan.params.district, isKidEvent);
+      pool = foods.filter(f => f.kategoriya === 'shirinlik' && (!f.id || !f.id.includes('tort')));
+      filterChipsHtml = `
+        <div class="swap-filter-chips" id="swap-filter-chips">
+          <button type="button" class="swap-filter-chip active" data-filter="all">Barchasi</button>
+          <button type="button" class="swap-filter-chip" data-filter="shirinlik">Shirinliklar</button>
+        </div>
+      `;
+    }
+  } else if (currentItem.planCategory === "drinks") {
+    if (currentItem.item.kategoriya === "meva") {
+      pool = foods.filter(f => f.kategoriya === "meva");
+    } else {
+      pool = drinks;
+      filterChipsHtml = `
+        <div class="swap-filter-chips" id="swap-filter-chips">
+          <button type="button" class="swap-filter-chip active" data-filter="all">Barchasi</button>
+          <button type="button" class="swap-filter-chip" data-filter="gazli">Gazli</button>
+          <button type="button" class="swap-filter-chip" data-filter="sharbat">Sharbat</button>
+          <button type="button" class="swap-filter-chip" data-filter="suv">Suv</button>
+          <button type="button" class="swap-filter-chip" data-filter="sut">Sut/Ayron</button>
+          <button type="button" class="swap-filter-chip" data-filter="choy">Choy</button>
+          <button type="button" class="swap-filter-chip" data-filter="kompot">Kompot</button>
+        </div>
+      `;
     }
   }
 
-  // Hozirgi mahsulotdan boshqa 3-5 ta muqobil variantni tayyorlash
   const currentTotal = plan.items.reduce((s, it) => s + it.calc.subtotal, 0);
   const isCurrentlyOverBudget = currentTotal > plan.params.budget;
 
-  const alternatives = [];
-  pool.forEach(cand => {
-    // Aynan shu ID li mahsulotni chiqarib tashlash
-    if (cand.item.id === currentItem.item.id && cand.shop.id === currentItem.shop.id) {
-      return;
-    }
-    const calc = calculateItemQuantityAndCost(cand.item, guests);
-    const diff = calc.subtotal - currentItem.calc.subtotal;
-    const priceProximity = Math.abs(diff);
-
-    alternatives.push({
-      ...cand,
-      calc,
-      diff,
-      priceProximity
-    });
-  });
-
-  // Eng yaqin narx va tanlangan tuman bo'yicha saralash
-  alternatives.sort((a, b) => {
-    if (a.priority !== b.priority) return a.priority - b.priority;
-    return a.priceProximity - b.priceProximity;
-  });
-
-  // 3-5 ta variantni olish
-  const topOptions = alternatives.slice(0, 5);
-
-  if (topOptions.length === 0) {
-    listEl.innerHTML = `<p class="form-hint" style="padding: 1rem 0;">Bu pozitsiya uchun boshqa variant yo'q.</p>`;
-  } else {
-    listEl.innerHTML = topOptions.map((opt, idx) => {
-      let diffHtml = "";
-      if (opt.diff > 0) {
-        diffHtml = `<span class="price-diff diff-plus">+${formatMoney(opt.diff)}</span>`;
-      } else if (opt.diff < 0) {
-        diffHtml = `<span class="price-diff diff-minus">-${formatMoney(Math.abs(opt.diff))}</span>`;
+  function renderOptions(activeFilter = "all") {
+    let filteredPool = pool;
+    if (activeFilter !== "all") {
+      if (activeFilter === "xamir") {
+        filteredPool = pool.filter(f => f.kategoriya === 'xamir' || f.kategoriya === 'xamiri');
+      } else if (activeFilter === "tort") {
+        filteredPool = pool.filter(f => f.id && f.id.includes('tort'));
       } else {
-        diffHtml = `<span class="price-diff diff-zero">0 so'm</span>`;
+        filteredPool = pool.filter(f => f.kategoriya === activeFilter);
       }
+    }
 
-      // Agar byudjetdan oshib ketilgan bo'lsa va bu variant arzonroq bo'lsa "Tejash uchun" belgisi
-      const isSaving = isCurrentlyOverBudget && opt.diff < 0;
-      const savingBadge = isSaving ? `<span class="badge badge-saving">Tejash uchun</span>` : "";
+    const alternatives = [];
+    filteredPool.forEach(rawItem => {
+      if (rawItem.id === currentItem.item.id) return;
+      const calc = calculateItemQuantityAndCost(rawItem, guests);
+      const shop = getBestShopForItem(rawItem, plan.params.district);
+      const diff = calc.subtotal - currentItem.calc.subtotal;
+      const priceProximity = Math.abs(diff);
 
-      const opening = getShopOpeningStatus(opt.shop.hours);
-      const openingText = opening ? `<span class="badge ${opening.badgeClass}">${opening.text}</span>` : "";
+      alternatives.push({
+        item: { ...rawItem, name: rawItem.nomi || rawItem.name },
+        shop,
+        calc,
+        diff,
+        priceProximity
+      });
+    });
 
-      return `
-        <div class="swap-option-card">
-          <div class="swap-opt-info">
-            <h5 class="swap-opt-name">${opt.item.name} ${savingBadge}</h5>
-            <div class="swap-opt-meta">
-              🏪 ${opt.shop.name} (📍 ${(opt.shop.districts || []).join(', ')})
-              ${openingText}
+    alternatives.sort((a, b) => a.priceProximity - b.priceProximity);
+    const topOptions = alternatives.slice(0, 8);
+
+    if (topOptions.length === 0) {
+      listEl.innerHTML = filterChipsHtml + `<p class="form-hint" style="padding: 1rem 0;">Bu toifada boshqa variant topilmadi.</p>`;
+    } else {
+      const cardsHtml = topOptions.map((opt, idx) => {
+        let diffHtml = "";
+        if (opt.diff > 0) {
+          diffHtml = `<span class="price-diff diff-plus">+${formatMoney(opt.diff)}</span>`;
+        } else if (opt.diff < 0) {
+          diffHtml = `<span class="price-diff diff-minus">-${formatMoney(Math.abs(opt.diff))}</span>`;
+        } else {
+          diffHtml = `<span class="price-diff diff-zero">0 so'm</span>`;
+        }
+
+        const isSaving = isCurrentlyOverBudget && opt.diff < 0;
+        const savingBadge = isSaving ? `<span class="badge badge-saving">Tejash uchun</span>` : "";
+        const opening = getShopOpeningStatus(opt.shop.hours);
+        const openingText = opening ? `<span class="badge ${opening.badgeClass}">${opening.text}</span>` : "";
+
+        return `
+          <div class="swap-option-card">
+            <img src="${opt.item.rasm || './icons/icon-192.png'}" class="swap-item-img" alt="${opt.item.name}" loading="lazy" onerror="this.style.display='none'">
+            <div class="swap-opt-info">
+              <h5 class="swap-opt-name">${opt.item.name} ${savingBadge}</h5>
+              ${opt.item.tarkib ? `<div class="item-ingredients">${opt.item.tarkib}</div>` : ""}
+              <div class="swap-opt-meta">
+                🏪 ${opt.shop.name} (📍 ${(opt.shop.districts || []).join(', ')})
+                ${openingText}
+              </div>
+              <div class="item-unit-calc font-numeric">${opt.calc.quantityText} · ${formatMoney(opt.item.narx_porsiya || opt.item.narx || opt.item.price || 0)}/${opt.item.birlik || opt.item.unit || 'dona'}</div>
             </div>
-            <div class="item-unit-calc font-numeric">${opt.calc.quantityText} · ${formatMoney(opt.item.price)}/${opt.item.unit}</div>
+            <div class="swap-opt-price-group">
+              <div class="swap-opt-total font-numeric">${formatMoney(opt.calc.subtotal)}</div>
+              ${diffHtml}
+              <button type="button" class="btn btn-sm btn-primary select-swap-option-btn" data-index="${idx}" style="margin-top: 0.35rem;">
+                Tanlash
+              </button>
+            </div>
           </div>
-          <div class="swap-opt-price-group">
-            <div class="swap-opt-total font-numeric">${formatMoney(opt.calc.subtotal)}</div>
-            ${diffHtml}
-            <button type="button" class="btn btn-sm btn-primary select-swap-option-btn" data-index="${idx}" style="margin-top: 0.35rem;">
-              Tanlash
-            </button>
-          </div>
-        </div>
-      `;
-    }).join("");
+        `;
+      }).join("");
 
-    // Variantlarni tanlash eventlari
-    listEl.querySelectorAll(".select-swap-option-btn").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const selectedOpt = topOptions[parseInt(btn.dataset.index, 10)];
-        executeSwapItem(currentItem.instanceId, selectedOpt);
-        closeSwapModal();
+      listEl.innerHTML = filterChipsHtml + cardsHtml;
+
+      listEl.querySelectorAll(".select-swap-option-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const selectedOpt = topOptions[parseInt(btn.dataset.index, 10)];
+          executeSwapItem(currentItem.instanceId, selectedOpt);
+          closeSwapModal();
+        });
+      });
+    }
+
+    // Filter chip listenerlari
+    listEl.querySelectorAll(".swap-filter-chip").forEach(chip => {
+      if (chip.dataset.filter === activeFilter) chip.classList.add("active");
+      chip.addEventListener("click", () => {
+        renderOptions(chip.dataset.filter);
       });
     });
   }
 
+  renderOptions("all");
   modal.classList.remove("hidden");
 }
 
@@ -928,44 +1171,47 @@ function openAddItemModal(category) {
   let catLabel = "Mahsulot";
   let pool = [];
   const guests = plan.params.guests;
-  const isKidEvent = plan.params.eventType === "Tug'ilgan kun (bolalar)";
+  const foods = (state.foodsData && state.foodsData.foods) ? state.foodsData.foods : [];
+  const drinks = (state.drinksData && state.drinksData.drinks) ? state.drinksData.drinks : [];
 
-  if (category === "taom") {
+  if (category === "taom" || category === "food") {
     catLabel = "Taom";
-    pool = getAllCandidateItems("taom", plan.params.district, isKidEvent);
-  } else if (category === "tort" || category === "shirinlik") {
-    catLabel = plan.isSweetsEvent ? "Shirinlik" : "Tort";
-    pool = plan.isSweetsEvent 
-      ? getAllCandidateItems("shirinlik", plan.params.district, isKidEvent)
-      : getAllCandidateItems("tort", plan.params.district, isKidEvent);
+    pool = foods.filter(f => ['palov', 'shorva', 'ikkinchi', 'kabob', 'xamiri', 'xamir', 'salat', 'mavsumiy'].includes(f.kategoriya));
+  } else if (category === "tort" || category === "cake" || category === "shirinlik") {
+    catLabel = "Shirinlik yoki tort";
+    pool = foods.filter(f => f.kategoriya === 'shirinlik' || (f.id && f.id.includes('tort')));
   } else if (category === "drinks") {
     catLabel = "Ichimlik yoki meva";
-    pool = [
-      ...getAllCandidateItems("ichimlik", plan.params.district, isKidEvent),
-      ...getAllCandidateItems("meva", plan.params.district, isKidEvent)
-    ];
+    pool = [...drinks, ...foods.filter(f => f.kategoriya === 'meva')];
   }
 
   titleEl.textContent = `Yangi ${catLabel.toLowerCase()} qo'shish`;
   infoEl.textContent = `Quyidagi variantlardan birini dasturxonga qo'shishingiz mumkin:`;
 
-  const options = pool.map(cand => ({
-    ...cand,
-    calc: calculateItemQuantityAndCost(cand.item, guests)
-  }));
+  const options = pool.map(rawItem => {
+    const calc = calculateItemQuantityAndCost(rawItem, guests);
+    const shop = getBestShopForItem(rawItem, plan.params.district);
+    return {
+      item: { ...rawItem, name: rawItem.nomi || rawItem.name },
+      shop,
+      calc
+    };
+  });
 
   if (options.length === 0) {
     listEl.innerHTML = `<p class="form-hint" style="padding: 1rem 0;">Bu toifa uchun variantlar topilmadi.</p>`;
   } else {
-    listEl.innerHTML = options.slice(0, 6).map((opt, idx) => {
+    listEl.innerHTML = options.slice(0, 10).map((opt, idx) => {
       return `
         <div class="swap-option-card">
+          <img src="${opt.item.rasm || './icons/icon-192.png'}" class="swap-item-img" alt="${opt.item.name}" loading="lazy" onerror="this.style.display='none'">
           <div class="swap-opt-info">
             <h5 class="swap-opt-name">${opt.item.name}</h5>
+            ${opt.item.tarkib ? `<div class="item-ingredients">${opt.item.tarkib}</div>` : ""}
             <div class="swap-opt-meta">
               🏪 ${opt.shop.name} (📍 ${(opt.shop.districts || []).join(', ')})
             </div>
-            <div class="item-unit-calc font-numeric">${opt.calc.quantityText} · ${formatMoney(opt.item.price)}/${opt.item.unit}</div>
+            <div class="item-unit-calc font-numeric">${opt.calc.quantityText} · ${formatMoney(opt.item.narx_porsiya || opt.item.narx || opt.item.price || 0)}/${opt.item.birlik || opt.item.unit || 'dona'}</div>
           </div>
           <div class="swap-opt-price-group">
             <div class="swap-opt-total font-numeric">${formatMoney(opt.calc.subtotal)}</div>
@@ -990,7 +1236,8 @@ function openAddItemModal(category) {
 }
 
 function closeSwapModal() {
-  document.getElementById("swap-modal").classList.add("hidden");
+  const modal = document.getElementById("swap-modal");
+  if (modal) modal.classList.add("hidden");
 }
 
 /**
@@ -1019,7 +1266,7 @@ function executeSwapItem(instanceId, candidate) {
 function executeAddItem(category, candidate) {
   pushUndoState();
   const plan = state.currentPlan;
-  const planCategory = (category === "taom") ? "food" : (category === "drinks" ? "drinks" : "cake");
+  const planCategory = (category === "taom" || category === "food") ? "food" : (category === "drinks" ? "drinks" : "cake");
   const newItem = createPlanItem(candidate, planCategory);
   plan.items.push(newItem);
   renderPlan(plan, newItem.instanceId);
@@ -1055,18 +1302,21 @@ function toggleLockItem(instanceId) {
 }
 
 /**
- * Qayta tuzish (regenerate) — faqat qulflanmagan mahsulotlar yangilanadi
+ * Qayta tuzish (regenerate) — qulflangan mahsulotlar saqlanadi, boshqalari yangilanadi
  */
 function regeneratePlan() {
+  if (state.isDebouncing) return;
+  state.isDebouncing = true;
+  setTimeout(() => { state.isDebouncing = false; }, 300);
+
   const plan = state.currentPlan;
   if (!plan) return;
 
   pushUndoState();
 
-  // Yangi to'liq reja hisoblab olamiz
+  // Yangi xilma-xil reja hisoblab olamiz
   const freshPlan = generateTablePlan(plan.params);
 
-  // Har bir toifa bo'yicha qulflanganlarini saqlab, qulflanmaganlarini yangilaymiz
   const updatedItems = [];
 
   // 1. Taom
@@ -1077,7 +1327,7 @@ function regeneratePlan() {
     updatedItems.push(...freshPlan.items.filter(it => it.planCategory === "food"));
   }
 
-  // 2. Tort / Shirinlik
+  // 2. Shirinliklar / Tort
   const lockedCake = plan.items.filter(it => it.planCategory === "cake" && it.locked);
   if (lockedCake.length > 0) {
     updatedItems.push(...lockedCake);
@@ -1089,107 +1339,108 @@ function regeneratePlan() {
   const lockedDrinks = plan.items.filter(it => it.planCategory === "drinks" && it.locked);
   if (lockedDrinks.length > 0) {
     updatedItems.push(...lockedDrinks);
-    // Agar qulflanmagan boshqa ichimlik/meva bo'lsa yangisidan to'ldirish
-    const freshDrinks = freshPlan.items.filter(it => it.planCategory === "drinks");
-    freshDrinks.forEach(fd => {
-      if (!lockedDrinks.some(ld => ld.item.category === fd.item.category)) {
-        updatedItems.push(fd);
-      }
-    });
   } else {
     updatedItems.push(...freshPlan.items.filter(it => it.planCategory === "drinks"));
   }
 
   plan.items = updatedItems;
+  plan.hasCake = freshPlan.hasCake;
+
   renderPlan(plan);
-  showToast("Dasturxon qayta tuzildi (qulflanganlar saqlandi)");
+  showToast("Dasturxon qayta tuzildi!");
 }
 
 /**
- * Undo (orqaga qaytarish) steki
+ * Undo (Orqaga qaytarish) stackiga holat saqlash
  */
 function pushUndoState() {
   if (!state.currentPlan) return;
-  const snapshot = JSON.parse(JSON.stringify(state.currentPlan));
+  const snapshot = JSON.stringify(state.currentPlan);
   state.undoStack.push(snapshot);
   if (state.undoStack.length > 20) {
     state.undoStack.shift();
   }
-  document.getElementById("undo-plan-btn").disabled = false;
 }
 
-function undoPlanChange() {
+/**
+ * Orqaga qaytarish
+ */
+function undoLastChange() {
   if (state.undoStack.length === 0) return;
-  const previous = state.undoStack.pop();
-  state.currentPlan = previous;
+  const previousStateJson = state.undoStack.pop();
+  state.currentPlan = JSON.parse(previousStateJson);
   renderPlan(state.currentPlan);
-  document.getElementById("undo-plan-btn").disabled = state.undoStack.length === 0;
   showToast("Oxirgi amal bekor qilindi");
 }
 
+/**
+ * Birinchi tavsiyaga qaytish (Reset)
+ */
 function resetToInitialPlan() {
   if (!state.initialPlan) return;
   pushUndoState();
   state.currentPlan = JSON.parse(JSON.stringify(state.initialPlan));
   renderPlan(state.currentPlan);
-  showToast("Birinchi tavsiyaga qaytildi");
+  showToast("Birinchi tavsiyaga qaytarildi");
 }
 
-// ============================================================================
-// NATIJANI ULASHISH VA KALENDAR (ICS) EKSPORTI
-// ============================================================================
-
 /**
- * Rejani matn ko'rinishida generatsiya qilish
+ * Natijani matn holida generatsiya qilish (Ulashish va nusxalash uchun)
  */
 function generatePlanSummaryText(plan) {
+  if (!plan) return "";
   const p = plan.params;
   const dateObj = parseLocalDate(p.eventDate);
   const formattedDate = formatDateUzbek(dateObj);
-  const totalAmount = plan.items.reduce((s, it) => s + it.calc.subtotal, 0);
+  const eventDisplayName = p.customEventName ? `${p.eventType} (${p.customEventName})` : p.eventType;
 
-  let text = `🍽️ STOLYOR — DASTURXON REJASI\n`;
-  text += `Tadbir: ${p.customEventName ? `${p.eventType} (${p.customEventName})` : p.eventType}\n`;
-  text += `Sana: ${formattedDate}\n`;
-  text += `Mehmonlar: ${p.guests} kishi | Tuman: ${p.district}\n`;
-  text += `Byudjet: ${formatMoney(p.budget)}\n`;
-  text += `----------------------------------------\n`;
+  const lines = [];
+  lines.push(`🍽️ Stolyor: ${eventDisplayName}`);
+  lines.push(`📅 Sana: ${formattedDate} (${getCountdownText(p.daysLeft)})`);
+  lines.push(`👥 Mehmonlar: ${p.guests} kishi`);
+  lines.push(`📍 Tuman: ${p.district}`);
+  lines.push(`💰 Rejalashtirilgan byudjet: ${formatMoney(p.budget)}`);
+  lines.push("");
 
   const foodItems = plan.items.filter(it => it.planCategory === "food");
   const cakeItems = plan.items.filter(it => it.planCategory === "cake");
   const drinkItems = plan.items.filter(it => it.planCategory === "drinks");
 
   if (foodItems.length > 0) {
-    text += `🍲 TAOM:\n`;
+    lines.push("🍲 TAOMLAR:");
     foodItems.forEach(it => {
-      text += `• ${it.item.name} (${it.calc.quantityText}) — ${formatMoney(it.calc.subtotal)} [${it.shop.name}]\n`;
+      lines.push(`  • ${it.item.name}: ${it.calc.quantityText} — ${formatMoney(it.calc.subtotal)} (${it.shop.name})`);
     });
+    lines.push("");
   }
 
   if (cakeItems.length > 0) {
-    text += `🎂 ${plan.isSweetsEvent ? "SHIRINLIKLAR" : "TORT"}:\n`;
+    lines.push(plan.hasCake ? "🎂 SHIRINLIKLAR VA TORT:" : "🍬 SHIRINLIKLAR:");
     cakeItems.forEach(it => {
-      text += `• ${it.item.name} (${it.calc.quantityText}) — ${formatMoney(it.calc.subtotal)} [${it.shop.name}]\n`;
+      lines.push(`  • ${it.item.name}: ${it.calc.quantityText} — ${formatMoney(it.calc.subtotal)} (${it.shop.name})`);
     });
+    lines.push("");
   }
 
   if (drinkItems.length > 0) {
-    text += `🍎 ICHIMLIK VA MEVALAR:\n`;
+    lines.push("🍎 ICHIMLIK VA MEVALAR:");
     drinkItems.forEach(it => {
-      text += `• ${it.item.name} (${it.calc.quantityText}) — ${formatMoney(it.calc.subtotal)} [${it.shop.name}]\n`;
+      lines.push(`  • ${it.item.name}: ${it.calc.quantityText} — ${formatMoney(it.calc.subtotal)} (${it.shop.name})`);
     });
+    lines.push("");
   }
 
-  text += `----------------------------------------\n`;
-  text += `JAMI XARAJAT: ${formatMoney(totalAmount)}\n`;
+  const totalAmount = plan.items.reduce((s, it) => s + it.calc.subtotal, 0);
+  lines.push(`💵 Jami: ${formatMoney(totalAmount)}`);
   if (p.budget >= totalAmount) {
-    text += `Qoldiq mablag': ${formatMoney(p.budget - totalAmount)}\n`;
+    lines.push(`✨ Qoldiq mablag': ${formatMoney(p.budget - totalAmount)}`);
   } else {
-    text += `Byudjetdan ortiqcha: ${formatMoney(totalAmount - p.budget)}\n`;
+    lines.push(`⚠️ Byudjetdan oshdi: ${formatMoney(totalAmount - p.budget)}`);
   }
-  text += `\n* Narxlar taxminiy. Do'konlardan tasdiqlang. (Stolyor ilovasi orqali tuzildi)`;
+  lines.push("");
+  lines.push("🌐 Reja \"Stolyor\" ilovasida tuzildi (https://stolyor.netlify.app/)");
 
-  return text;
+  return lines.join("\n");
 }
 
 /**
@@ -1204,24 +1455,23 @@ async function sharePlanResult() {
   if (navigator.share) {
     try {
       await navigator.share({
-        title: `Stolyor: ${plan.params.eventType} rejasi`,
+        title: "Stolyor dasturxon rejasi",
         text: shareText
       });
-      showToast("Reja muvaffaqiyatli ulashildi!");
+      showToast("Reja ulashildi!");
       return;
-    } catch (e) {
-      if (e.name !== "AbortError") {
-        console.warn("Share API xatosi:", e);
+    } catch (err) {
+      if (err.name !== "AbortError") {
+        console.warn("Web Share xatoligi:", err);
       }
     }
   }
 
-  // Fallback: Clipboard ga nusxalash
+  // Fallback: Clipboard
   try {
     await navigator.clipboard.writeText(shareText);
     showToast("Reja buferga nusxalandi!");
   } catch (err) {
-    // Eski brauzerlar uchun textarea fallback
     const textarea = document.createElement("textarea");
     textarea.value = shareText;
     document.body.appendChild(textarea);
@@ -1288,7 +1538,9 @@ function downloadBlob(content, filename, mimeType) {
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  setTimeout(() => {
+    URL.revokeObjectURL(url);
+  }, 1000);
 }
 
 // ============================================================================
@@ -1515,9 +1767,10 @@ function renderPeopleTab() {
                   <span class="badge badge-subtle" style="margin-left: 0.35rem;">${p.eventType || "Tug'ilgan kun"}</span>
                   ${ageInfo}
                 </div>
-                <div>
-                  <button type="button" class="btn btn-sm btn-subtle edit-person-btn" data-id="${p.id}">✏️</button>
-                  <button type="button" class="btn btn-sm btn-subtle text-danger delete-person-btn" data-id="${p.id}">🗑️</button>
+                <div style="display: flex; gap: 0.3rem; align-items: center;">
+                  <button type="button" class="btn btn-sm btn-outline plan-for-person-btn" data-id="${p.id}" title="Reja tuzish">🎯 Reja</button>
+                  <button type="button" class="btn btn-sm btn-subtle edit-person-btn" data-id="${p.id}" title="Tahrirlash">✏️</button>
+                  <button type="button" class="btn btn-sm btn-subtle text-danger delete-person-btn" data-id="${p.id}" title="O'chirish">🗑️</button>
                 </div>
               </div>
             `;
@@ -1618,7 +1871,14 @@ function startPlanForPerson(personId) {
   // Faol shaxs kontekstini saqlash (allergiya va izohlar ko'rinishi uchun)
   state.activePersonContext = person;
 
-  showToast(`${person.name} uchun dasturxon parametrlari to'ldirildi. "Stol tuzish" tugmasini bosing!`);
+  // Agar byudjet mavjud bo'lsa, darhol reja tuziladi
+  const curBudget = parseInt(document.getElementById("budget-input").value, 10);
+  if (!isNaN(curBudget) && curBudget >= 50000) {
+    document.getElementById("planner-form").dispatchEvent(new Event("submit"));
+    showToast(`${person.name} uchun dasturxon rejasi tuzildi!`);
+  } else {
+    showToast(`${person.name} uchun dasturxon parametrlari to'ldirildi. "Stol tuzish" tugmasini bosing!`);
+  }
 }
 
 function formatDateToInput(d) {
@@ -2106,9 +2366,8 @@ function setupFormInputs() {
   }
   updateDateDisplay();
 
-  dateInput.addEventListener("change", () => {
-    updateDateDisplay();
-  });
+  dateInput.addEventListener("change", updateDateDisplay);
+  dateInput.addEventListener("input", updateDateDisplay);
 
   // Tadbir turi chiplari
   const chips = document.querySelectorAll("#event-type-chips .chip");
@@ -2142,17 +2401,53 @@ function setupFormInputs() {
     selectEventTypeChip(lastType);
   }
 
+  // Maxsus nomni eslab qolish
+  const lastCustomName = storageGet(CONFIG.storageKeys.lastCustomName);
+  if (lastCustomName && customEventInput) {
+    customEventInput.value = lastCustomName;
+  }
+  if (customEventInput) {
+    customEventInput.addEventListener("input", () => {
+      storageSet(CONFIG.storageKeys.lastCustomName, customEventInput.value);
+    });
+  }
+
+  // Standart byudjet
+  if (!budgetInput.value) {
+    budgetInput.value = "500000";
+  }
+
   // Tezkor byudjet tugmalari
-  document.querySelectorAll(".quick-buttons .btn-chip").forEach(btn => {
+  const quickBtns = document.querySelectorAll(".quick-buttons .btn-chip");
+  function syncQuickButtons() {
+    const curVal = budgetInput.value;
+    quickBtns.forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.budget === curVal);
+    });
+  }
+  syncQuickButtons();
+
+  quickBtns.forEach(btn => {
     btn.addEventListener("click", () => {
       budgetInput.value = btn.dataset.budget;
+      syncQuickButtons();
       document.getElementById("budget-error").classList.add("hidden");
     });
+  });
+
+  budgetInput.addEventListener("input", () => {
+    syncQuickButtons();
+    document.getElementById("budget-error").classList.add("hidden");
   });
 
   // Mehmonlar soni (- va +)
   const minusBtn = document.getElementById("guests-minus-btn");
   const plusBtn = document.getElementById("guests-plus-btn");
+
+  const lastGuests = storageGet(CONFIG.storageKeys.lastGuests);
+  if (lastGuests) {
+    guestsInput.value = lastGuests;
+  }
 
   minusBtn.addEventListener("click", () => {
     let val = parseInt(guestsInput.value, 10) || 8;
@@ -2168,6 +2463,10 @@ function setupFormInputs() {
       guestsInput.value = val + 1;
       storageSet(CONFIG.storageKeys.lastGuests, guestsInput.value);
     }
+  });
+
+  guestsInput.addEventListener("input", () => {
+    storageSet(CONFIG.storageKeys.lastGuests, guestsInput.value);
   });
 
   // Oxirgi tanlangan tumanni tiklash
@@ -2214,6 +2513,7 @@ function updateDateDisplay() {
   if (!val) {
     uzbekDisplay.textContent = "";
     countdownDisplay.textContent = "";
+    countdownDisplay.style.display = "none";
     return;
   }
 
@@ -2221,11 +2521,12 @@ function updateDateDisplay() {
   const today = new Date();
   const todayZero = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
-  if (selectedDate.getTime() < todayZero.getTime()) {
+  if (!selectedDate || isNaN(selectedDate.getTime()) || selectedDate.getTime() < todayZero.getTime()) {
     dateError.textContent = "O'tgan sanani tanlab bo'lmaydi";
     dateError.classList.remove("hidden");
     uzbekDisplay.textContent = "";
     countdownDisplay.textContent = "";
+    countdownDisplay.style.display = "none";
     return;
   } else {
     dateError.classList.add("hidden");
@@ -2237,6 +2538,7 @@ function updateDateDisplay() {
 
   uzbekDisplay.textContent = formatted;
   countdownDisplay.textContent = countdownText;
+  countdownDisplay.style.display = "inline-block";
 
   if (daysDiff <= 2) {
     countdownDisplay.classList.add("urgent");
@@ -2268,7 +2570,7 @@ function handlePlannerSubmit(e) {
   const todayZero = new Date();
   todayZero.setHours(0, 0, 0, 0);
 
-  if (!dateVal || selectedDate.getTime() < todayZero.getTime()) {
+  if (!dateVal || !selectedDate || isNaN(selectedDate.getTime()) || selectedDate.getTime() < todayZero.getTime()) {
     document.getElementById("date-error").textContent = "O'tgan sanani tanlab bo'lmaydi";
     document.getElementById("date-error").classList.remove("hidden");
     hasError = true;
@@ -2391,6 +2693,22 @@ function setupResultActionButtons() {
     if (e.target.id === "swap-modal") closeSwapModal();
   });
 
+  // Person modalni yopish (fon bosilganda)
+  const personModal = document.getElementById("person-modal");
+  if (personModal) {
+    personModal.addEventListener("click", (e) => {
+      if (e.target.id === "person-modal") closePersonModal();
+    });
+  }
+
+  // Escape tugmasi orqali ochiq modallarni yopish
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      closeSwapModal();
+      closePersonModal();
+    }
+  });
+
   // Fikr bildirish (Feedback)
   // ESLATMA: Haqiqiy backend (masalan Google Form yoki API) ulanishi mumkin bo'lgan joy:
   // Masalan: fetch("https://example.com/api/feedback", { method: "POST", body: JSON.stringify({ answer }) });
@@ -2447,8 +2765,8 @@ function setupPWA() {
     storageSet(CONFIG.storageKeys.pwaDismissed, true);
   });
 
-  // Service Workerni ro'yxatdan o'tkazish
-  if ("serviceWorker" in navigator) {
+  // Service Workerni ro'yxatdan o'tkazish (faqat HTTP yoki HTTPS protokollarida, file:// da xatolik bermasligi uchun)
+  if ("serviceWorker" in navigator && typeof window !== "undefined" && window.location.protocol.startsWith("http")) {
     window.addEventListener("load", () => {
       navigator.serviceWorker.register("./sw.js")
         .then((reg) => {
@@ -2466,7 +2784,7 @@ function setupPWA() {
 // ============================================================================
 async function initApp() {
   // 1. Do'konlar ma'lumotlarini yuklash
-  await loadShopsData();
+  await loadAllDatasets();
 
   // 2. Form inputlarini sozlash
   setupFormInputs();

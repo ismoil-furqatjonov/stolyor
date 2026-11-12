@@ -39,7 +39,7 @@ function generateIcon(size) {
   // Dark green: #16231D -> 22, 35, 29, 255
   // Cream: #F6F1E7 -> 246, 241, 231, 255
   // Amber: #E8A33D -> 232, 163, 61, 255
-  
+
   const cx = w / 2;
   const cy = h / 2;
   const cornerR = w * 0.22;
@@ -59,7 +59,7 @@ function generateIcon(size) {
       const inBox = (dxBox * dxBox + dyBox * dyBox <= cornerR * cornerR);
 
       if (!inBox) {
-        line[idx] = 0; line[idx+1] = 0; line[idx+2] = 0; line[idx+3] = 0;
+        line[idx] = 0; line[idx + 1] = 0; line[idx + 2] = 0; line[idx + 3] = 0;
         continue;
       }
 
@@ -86,7 +86,7 @@ function generateIcon(size) {
         }
       }
 
-      line[idx] = r; line[idx+1] = g; line[idx+2] = b; line[idx+3] = a;
+      line[idx] = r; line[idx + 1] = g; line[idx + 2] = b; line[idx + 3] = a;
     }
     scanlines.push(line);
   }
